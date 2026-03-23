@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { DashboardStats } from '../types';
 import { Users, Heart, Star, TrendingUp, CheckCircle2, Award, GraduationCap, Brain, History } from 'lucide-react';
 import { motion } from 'motion/react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { cn } from '../lib/utils';
 import { InfoTooltip } from './ui/Tooltip';
 import { ExportButton } from './ui/ExportButton';
@@ -23,6 +23,7 @@ export function EngajamentoContent({ stats }: EngajamentoContentProps) {
   const actionsRef = useRef<HTMLDivElement>(null);
   const areaEngagementRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<HTMLDivElement>(null);
+  const perceptionRef = useRef<HTMLDivElement>(null);
 
   const enpsData = [
     { name: 'Promotores', value: stats.enpsDistribution.promoters, color: '#049C7A' },

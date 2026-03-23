@@ -5,7 +5,8 @@ import {
   BarChart3, 
   Users, 
   GitCompare, 
-  Flame 
+  Flame,
+  MessageSquare
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { DateRangePicker } from './ui/DateRangePicker';
@@ -37,6 +38,7 @@ export function Header({
     { id: 'cultura', label: 'Cultura', icon: Users },
     { id: 'comparativo', label: 'Comparativo', icon: GitCompare },
     { id: 'heatmap', label: 'Mapa de Calor', icon: Flame },
+    { id: 'feedback', label: 'Feedback', icon: MessageSquare },
   ];
 
   return (
@@ -46,8 +48,8 @@ export function Header({
         <div className="flex items-center shrink-0">
           <div className="w-32 h-12 flex items-center justify-center">
             <img 
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtsnFnajhTLXQAsSuDkVwA-CXQXrL-JX8N1YHcReuYylj74ONfbdDwguUOmQNyVLas7W3yf9QObRIU22szas-a46Hrq8ec&s&ec=121584920" 
-              alt="Logo" 
+              src="https://consistem.com.br/wp-content/uploads/2023/05/logo-consistem_2023-1.svg" 
+              alt="Consistem Logo" 
               className="w-full h-full object-contain"
               referrerPolicy="no-referrer"
             />

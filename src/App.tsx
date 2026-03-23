@@ -5,6 +5,7 @@ import { VisaoGeralContent } from './components/VisaoGeralContent';
 import { CulturaContent } from './components/CulturaContent';
 import { ComparativoContent } from './components/ComparativoContent';
 import { HeatmapContent } from './components/HeatmapContent';
+import { FeedbackContent } from './components/FeedbackContent';
 import { DashboardSkeleton } from './components/skeletons/DashboardSkeleton';
 import { fetchSurveyData, processStats } from './services/dataService';
 import { DashboardStats } from './types';
@@ -90,6 +91,7 @@ export default function App() {
             {activeTab === 'cultura' && stats && <CulturaContent stats={stats} />}
             {activeTab === 'comparativo' && stats && <ComparativoContent stats={stats} />}
             {activeTab === 'heatmap' && stats && <HeatmapContent stats={stats} />}
+            {activeTab === 'feedback' && stats && <FeedbackContent stats={stats} />}
           </div>
         </main>
       </div>

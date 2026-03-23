@@ -64,18 +64,22 @@ export function VisaoGeralContent({ stats }: VisaoGeralContentProps) {
             </div>
             <ExportButton targetRef={personalityRef} fileName="personalidade-consistem" />
           </div>
-          <div className="flex flex-wrap gap-2 sm:gap-3">
+          <div className="space-y-4">
             {stats.personalityTraits.map((trait, index) => (
-              <motion.div 
-                key={trait.trait}
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: index * 0.1 }}
-                className="px-4 py-2 sm:px-6 sm:py-3 rounded-xl sm:rounded-2xl bg-on-surface/5 border border-outline-variant/10 flex items-center gap-2 sm:gap-3"
-              >
-                <span className="text-xs sm:text-sm font-bold">{trait.trait}</span>
-                <span className="text-[10px] sm:text-xs text-primary font-extrabold">{trait.percentage.toFixed(0)}%</span>
-              </motion.div>
+              <div key={trait.trait} className="space-y-1">
+                <div className="flex justify-between text-xs sm:text-sm font-bold">
+                  <span>{trait.trait}</span>
+                  <span>{trait.percentage.toFixed(0)}%</span>
+                </div>
+                <div className="h-2 bg-on-surface/5 rounded-full overflow-hidden">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: `${trait.percentage}%` }}
+                    transition={{ duration: 1, delay: index * 0.1 }}
+                    className="h-full bg-primary"
+                  />
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -88,26 +92,27 @@ export function VisaoGeralContent({ stats }: VisaoGeralContentProps) {
             </div>
             <ExportButton targetRef={infoSourcesRef} fileName="fontes-informacao" />
           </div>
-          <div className="h-48 sm:h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={stats.infoSources} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--outline-variant)" opacity={0.1} horizontal={false} />
-                <XAxis type="number" hide />
-                <YAxis 
-                  dataKey="source" 
-                  type="category" 
-                  width={80} 
-                  axisLine={false} 
-                  tickLine={false}
-                  tick={{ fontSize: 9, fontWeight: 600, fill: 'var(--on-surface)' }}
-                />
-                <RechartsTooltip 
-                  cursor={{ fill: 'transparent' }}
-                  contentStyle={{ backgroundColor: 'var(--surface)', border: 'none', borderRadius: '12px', fontSize: '10px' }}
-                />
-                <Bar dataKey="count" fill="var(--color-primary)" radius={[0, 4, 4, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+          <div className="space-y-4">
+            {stats.infoSources.map((source, index) => {
+              const total = stats.infoSources.reduce((acc, curr) => acc + curr.count, 0);
+              const percentage = (source.count / total) * 100;
+              return (
+                <div key={source.source} className="space-y-1">
+                  <div className="flex justify-between text-xs sm:text-sm font-bold">
+                    <span>{source.source}</span>
+                    <span>{percentage.toFixed(0)}%</span>
+                  </div>
+                  <div className="h-2 bg-on-surface/5 rounded-full overflow-hidden">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: `${percentage}%` }}
+                      transition={{ duration: 1, delay: index * 0.1 }}
+                      className="h-full bg-primary"
+                    />
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -117,27 +122,29 @@ export function VisaoGeralContent({ stats }: VisaoGeralContentProps) {
           <h3 className="text-variant-style">Percepção de Valor</h3>
           <ExportButton targetRef={valuePerceptionRef} fileName="percepcao-valor" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-          <div className="p-6 sm:p-8 rounded-3xl bg-primary/10 border border-primary/20">
-            <h4 className="text-base sm:text-lg font-bold mb-3 sm:mb-4">O que fazemos aqui hoje?</h4>
-            <p className="text-xs sm:text-sm leading-relaxed text-on-surface/80 italic">
-              "A maioria dos colaboradores percebe a Consistem como uma empresa que gera valor através da tecnologia e do compromisso com o cliente."
-            </p>
-          </div>
-          <div className="space-y-3 sm:space-y-4">
-            <div className="flex items-center justify-between p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-on-surface/5">
-              <span className="text-xs sm:text-sm font-medium">Foco no Cliente</span>
-              <span className="text-xs sm:text-sm font-bold text-primary">85%</span>
+        <div className="h-12 w-full flex rounded-lg overflow-hidden">
+          {stats.valuePerceptionRanking.map((item, index) => {
+            const total = stats.valuePerceptionRanking.reduce((acc, curr) => acc + curr.count, 0);
+            const percentage = (item.count / total) * 100;
+            return (
+              <div 
+                key={item.phrase} 
+                style={{ 
+                  width: `${percentage}%`,
+                  backgroundColor: index === 0 ? '#049C7A' : index === 1 ? '#F27D26' : '#E84F3D'
+                }}
+                title={`${item.phrase}: ${percentage.toFixed(0)}%`}
+              />
+            );
+          })}
+        </div>
+        <div className="mt-6 space-y-2">
+          {stats.valuePerceptionRanking.map((item, index) => (
+            <div key={item.phrase} className="flex items-center gap-2 text-xs">
+              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: index === 0 ? '#049C7A' : index === 1 ? '#F27D26' : '#E84F3D' }}></div>
+              <span className="text-secondary">{item.phrase}</span>
             </div>
-            <div className="flex items-center justify-between p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-on-surface/5">
-              <span className="text-xs sm:text-sm font-medium">Inovação Tecnológica</span>
-              <span className="text-xs sm:text-sm font-bold text-primary">72%</span>
-            </div>
-            <div className="flex items-center justify-between p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-on-surface/5">
-              <span className="text-xs sm:text-sm font-medium">Comprometimento</span>
-              <span className="text-xs sm:text-sm font-bold text-primary">91%</span>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>

@@ -80,6 +80,9 @@ export function processStats(
     areas: allAreas,
     heatmap: [],
     comparisons: [],
+    valuePerceptionRanking: [],
+    communicationFeedback: [],
+    visionFeedback: [],
     totalResponses: 0
   };
 
@@ -185,6 +188,18 @@ export function processStats(
     .map(([source, count]) => ({ source, count }))
     .sort((a, b) => b.count - a.count);
 
+  const valuePerceptionMap: Record<string, number> = {};
+  filteredData.forEach(d => {
+    if (d.valuePerception) valuePerceptionMap[d.valuePerception] = (valuePerceptionMap[d.valuePerception] || 0) + 1;
+  });
+  const valuePerceptionRanking = Object.entries(valuePerceptionMap)
+    .map(([phrase, count]) => ({ phrase, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 3);
+
+  const communicationFeedback = filteredData.map(d => ({ area: d.area, text: d.communicationChange }));
+  const visionFeedback = filteredData.map(d => ({ area: d.area, text: d.vision40Years }));
+
   // Heatmap Data
   const heatmap = allAreas.map(area => {
     const areaData = data.filter(d => d.area === area);
@@ -240,6 +255,9 @@ export function processStats(
     leadershipSentiment,
     priorityActions,
     infoSources,
+    valuePerceptionRanking,
+    communicationFeedback,
+    visionFeedback,
     areas: allAreas,
     heatmap,
     comparisons,

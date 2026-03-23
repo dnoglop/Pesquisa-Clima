@@ -63,6 +63,9 @@ export interface DashboardStats {
   leadershipSentiment: { label: string; value: number }[];
   priorityActions: { action: string; count: number }[];
   infoSources: { source: string; count: number }[];
+  valuePerceptionRanking: { phrase: string; count: number }[];
+  communicationFeedback: { area: string; text: string }[];
+  visionFeedback: { area: string; text: string }[];
   areas: string[];
   heatmap: HeatmapData[];
   comparisons: AreaComparison[];
