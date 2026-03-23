@@ -48,7 +48,7 @@ export function Header({
         <div className="flex items-center shrink-0">
           <div className="w-32 h-12 flex items-center justify-center">
             <img 
-              src="https://consistem.com.br/wp-content/uploads/2023/05/logo-consistem_2023-1.svg" 
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQeXyRP1EBwBnu6AeqXq9N5I0sfG_Go0DkOaQ&s" 
               alt="Consistem Logo" 
               className="w-full h-full object-contain"
               referrerPolicy="no-referrer"

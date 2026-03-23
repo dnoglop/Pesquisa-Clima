@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { DashboardStats } from '../types';
 import { Megaphone, Shield, Users, Target, Zap } from 'lucide-react';
 import { motion } from 'motion/react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { ExportButton } from './ui/ExportButton';
 
 interface CulturaContentProps {
@@ -13,6 +13,13 @@ export function CulturaContent({ stats }: CulturaContentProps) {
   const leadershipRef = useRef<HTMLDivElement>(null);
   const psychologicalSafetyRef = useRef<HTMLDivElement>(null);
   const testimonialsRef = useRef<HTMLDivElement>(null);
+
+  const COLORS = ['#049C7A', '#312D31', '#E84F3D', '#F27D26'];
+
+  const totalSentiment = stats.leadershipSentiment.reduce((acc, curr) => acc + curr.value, 0);
+  const positivePercentage = totalSentiment > 0 
+    ? ((stats.leadershipSentiment.find(s => s.label.toLowerCase().includes('embaixadora'))?.value || 0) / totalSentiment * 100)
+    : 0;
 
   return (
     <div className="p-4 sm:p-8 mt-16 space-y-6 sm:space-y-8 max-w-7xl mx-auto">
@@ -26,30 +33,49 @@ export function CulturaContent({ stats }: CulturaContentProps) {
             <ExportButton targetRef={leadershipRef} fileName="percepcao-lideranca" />
           </div>
           
-          <div className="h-48 sm:h-64">
+          <div className="h-64 relative">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={stats.leadershipSentiment} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--outline-variant)" opacity={0.1} horizontal={false} />
-                <XAxis type="number" hide />
-                <YAxis 
-                  dataKey="label" 
-                  type="category" 
-                  width={80} 
-                  axisLine={false} 
-                  tickLine={false}
-                  tick={{ fontSize: 9, fontWeight: 600, fill: 'var(--on-surface)' }}
-                />
-                <Tooltip 
-                  cursor={{ fill: 'transparent' }}
-                  contentStyle={{ backgroundColor: 'var(--surface)', border: 'none', borderRadius: '12px', fontSize: '10px' }}
-                />
-                <Bar dataKey="value" radius={[0, 4, 4, 0]}>
+              <PieChart>
+                <Pie
+                  data={stats.leadershipSentiment}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={80}
+                  paddingAngle={5}
+                  dataKey="value"
+                  nameKey="label"
+                  stroke="none"
+                >
                   {stats.leadershipSentiment.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={index === 0 ? 'var(--color-primary)' : 'var(--color-tertiary)'} />
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
-                </Bar>
-              </BarChart>
+                </Pie>
+                <Tooltip 
+                  contentStyle={{ backgroundColor: 'var(--surface)', border: 'none', borderRadius: '12px', fontSize: '10px', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                />
+                <Legend 
+                  verticalAlign="bottom" 
+                  height={36}
+                  content={({ payload }) => (
+                    <div className="flex flex-wrap justify-center gap-4 mt-4">
+                      {payload?.map((entry: any, index: number) => (
+                        <div key={`item-${index}`} className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }}></div>
+                          <span className="text-[10px] font-bold text-secondary uppercase tracking-wider">
+                            {entry.value}: {((stats.leadershipSentiment[index].value / totalSentiment) * 100).toFixed(0)}%
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                />
+              </PieChart>
             </ResponsiveContainer>
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pb-12">
+              <span className="text-[8px] sm:text-[10px] font-bold text-secondary uppercase tracking-widest">Favorável</span>
+              <span className="text-2xl sm:text-3xl font-extrabold text-primary">{positivePercentage.toFixed(0)}%</span>
+            </div>
           </div>
         </div>
 
