@@ -1,0 +1,131 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Open+Sans:wght@400;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sora: "Sora", sans-serif;
+  --font-opensans: "Open Sans", sans-serif;
+  
+  --color-primary: #E84F3D;
+  --color-primary-container: #F1634A;
+  --color-on-primary-container: #ffffff;
+  --color-tertiary: #049C7A;
+  --color-background: #312D31;
+  --color-surface: #3d3a3d;
+  --color-surface-low: #363236;
+  --color-surface-high: #4a474a;
+  --color-on-surface: #ffffff;
+  --color-secondary: #d1d1d1;
+  --color-outline: #595559;
+  --color-outline-variant: #4a474a;
+
+  /* Custom Typography Sizes & Weights */
+  --text-primary-h: 40px;
+  --font-weight-primary-h: 800;
+  --leading-primary-h: 1.4em;
+
+  --text-secondary-h: 30px;
+  --font-weight-secondary-h: 400;
+  --leading-secondary-h: 1.2em;
+
+  --text-base-custom: 18px;
+  --font-weight-base-custom: 400;
+  --leading-base-custom: 1.4em;
+
+  --text-accent-custom: 18px;
+  --font-weight-accent-custom: 700;
+  --leading-accent-custom: 1.4em;
+
+  --text-variant-h: 26px;
+  --font-weight-variant-h: 600;
+  --leading-variant-h: 1.2em;
+}
+
+@layer base {
+  html {
+    font-size: 16px;
+  }
+  body {
+    @apply bg-background text-on-surface font-opensans antialiased transition-colors duration-300;
+    font-size: var(--text-base-custom);
+    font-weight: var(--font-weight-base-custom);
+    line-height: var(--leading-base-custom);
+  }
+  h1 {
+    @apply font-sora;
+    font-size: var(--text-primary-h);
+    font-weight: var(--font-weight-primary-h);
+    line-height: var(--leading-primary-h);
+  }
+  h2 {
+    @apply font-sora;
+    font-size: var(--text-secondary-h);
+    font-weight: var(--font-weight-secondary-h);
+    line-height: var(--leading-secondary-h);
+  }
+  h3 {
+    @apply font-sora;
+    font-size: var(--text-variant-h);
+    font-weight: var(--font-weight-variant-h);
+    line-height: var(--leading-variant-h);
+  }
+}
+
+@utility text-primary-style {
+  font-family: var(--font-sora);
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1.4em;
+}
+@utility text-secondary-style {
+  font-family: var(--font-sora);
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1.2em;
+}
+@utility text-base-style {
+  font-family: var(--font-opensans);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.4em;
+}
+@utility text-accent-style {
+  font-family: var(--font-opensans);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.4em;
+}
+@utility text-variant-style {
+  font-family: var(--font-sora);
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.2em;
+}
+
+.glass-card {
+  @apply bg-surface/60 backdrop-blur-xl border border-outline-variant/20;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.dark {
+  --color-background: #312D31;
+  --color-on-surface: #ffffff;
+  --color-surface: #3d3a3d;
+  --color-secondary: #d1d1d1;
+}
+
+.light {
+  --color-background: #f8f9fa;
+  --color-on-surface: #312D31;
+  --color-surface: #ffffff;
+  --color-surface-low: #f1f3f5;
+  --color-surface-high: #e9ecef;
+  --color-secondary: #495057;
+  --color-outline-variant: #dee2e6;
+}
