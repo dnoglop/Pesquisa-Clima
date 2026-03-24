@@ -28,34 +28,44 @@ export async function fetchSurveyData(): Promise<SurveyResponse[]> {
       rows = Array.isArray(data) ? data : (data.data || data.rows || []);
     }
 
-    return rows.map((row: any) => ({
-      submissionId: String(row['Submission ID'] || row['submissionId'] || ''),
-      respondentId: String(row['Respondent ID'] || row['respondentId'] || ''),
-      submittedAt: String(row['Submitted at'] || row['submittedAt'] || ''),
-      area: String(row['Em qual grupo de área você atua hoje?'] || row['area'] || ''),
-      hobbies: String(row['Quais são os seus hobbies no tempo livre? (selecione até 3)'] || row['hobbies'] || ''),
-      exercise: String(row['Pratica exercício físico?'] || row['exercise'] || ''),
-      infoSource: String(row['Onde se informa mais sobre as notícias do dia?'] || row['infoSource'] || ''),
-      iaFrequency: String(row['Com que frequência utiliza ferramentas de IA (como Gemini) no seu dia a dia?'] || row['iaFrequency'] || ''),
-      personality: String(row['Se a nossa empresa fosse uma pessoa, quais adjetivos melhor a descreveriam? (selecione até 3)'] || row['personality'] || ''),
-      valuePerception: String(row['Qual destas frases melhor define o que fazemos aqui hoje?'] || row['valuePerception'] || ''),
-      pillarsIdentification: parseInt(String(row['Conheço, entendo e identifico-me com os pilares da Consistem (Relacionamento, comprometimento, qualidade, evolução e transparência)'] || row['pillarsIdentification'] || '0')),
-      culturalSync: parseInt(String(row['O que comunicamos (nos nossos canais) aos clientes externamente é exatamente o que vivemos aqui dentro.'] || row['culturalSync'] || '0')),
-      testimonial: String(row['Se um amigo te perguntasse "Como é trabalhar aí?", o que você diria honestamente nos primeiros 10 segundos?'] || row['testimonial'] || ''),
-      managerExample: parseInt(String(row['O meu gestor direto age como um exemplo prático da cultura e dos valores da Consistem.'] || row['managerExample'] || '0')),
-      leadershipAmbassador: String(row['Você sente que as lideranças (como um todo) atuam como embaixadoras da marca ou como crítica da marca diante das equipes?'] || row['leadershipAmbassador'] || ''),
-      psychologicalSafety: parseInt(String(row['Sinto segurança na minha equipe para dar opiniões, propor ideias e inovar.'] || row['psychologicalSafety'] || '0')),
-      safeSpaceForErrors: parseInt(String(row['O quanto você sente que temos "espaço seguro" para admitir erros sem que isso vire um julgamento pessoal?'] || row['safeSpaceForErrors'] || '0')),
-      enps: parseInt(String(row['De 0 a 10, o quanto você recomendaria a Consistem como um excelente lugar para se trabalhar a um amigo ou familiar?'] || row['enps'] || '0')),
-      recognitionFeeling: parseInt(String(row['Sinto que o meu trabalho e o meu esforço diário são reconhecidos e valorizados pela empresa.'] || row['recognitionFeeling'] || '0')),
-      recognitionTypes: String(row['Que formas de reconhecimento prefere? (Selecione até 2)'] || row['recognitionTypes'] || ''),
-      elogioCanal: String(row['Gostaria de ter um canal oficial e aberto para elogiar e agradecer publicamente aos colegas de trabalho que me ajudam.'] || row['elogioCanal'] || ''),
-      legacy: parseInt(String(row['Eu me sinto motivado(a) a documentar e partilhar os meus conhecimentos e processos com o restante da empresa para deixar um legado.'] || row['legacy'] || '0')),
-      mentorship: String(row['Teria muito interesse em participar num programa estruturado de Mentoria (seja para aprender com os mais experientes ou para ensinar).'] || row['mentorship'] || ''),
-      priorityActions: String(row['Pensando no que faria mais diferença positiva no seu dia a dia hoje, quais destas ações gostaria de ver a Consistem a lançar primeiro?'] || row['priorityActions'] || ''),
-      communicationChange: String(row['O que você mudaria hoje na nossa comunicação para que ela parecesse mais "a nossa cara"?'] || row['communicationChange'] || ''),
-      vision40Years: String(row['Pensando na nossa marca de 40 anos, o que você acredita que a Consistem precisa começar a fazer HOJE para ser uma empresa ainda melhor nas próximas décadas?'] || row['vision40Years'] || ''),
-    }));
+    return rows.map((row: any) => {
+      // Helper to find column value by partial or exact match (case-insensitive)
+      const getVal = (patterns: string[], defaultValue: string = '') => {
+        const key = Object.keys(row).find(k => 
+          patterns.some(p => k.toLowerCase().includes(p.toLowerCase()))
+        );
+        return key ? String(row[key]) : defaultValue;
+      };
+
+      return {
+        submissionId: getVal(['Submission ID', 'submissionId']),
+        respondentId: getVal(['Respondent ID', 'respondentId']),
+        submittedAt: getVal(['Submitted at', 'submittedAt']),
+        area: getVal(['grupo de área', 'area']),
+        hobbies: getVal(['hobbies', 'tempo livre']),
+        exercise: getVal(['exercício físico', 'exercise']),
+        infoSource: getVal(['notícias do dia', 'infoSource']),
+        iaFrequency: getVal(['ferramentas de IA', 'iaFrequency']),
+        personality: getVal(['empresa fosse uma pessoa', 'personality']),
+        valuePerception: getVal(['frases melhor define', 'valuePerception']),
+        pillarsIdentification: parseInt(getVal(['pilares da Consistem', 'pillarsIdentification'], '0')),
+        culturalSync: parseInt(getVal(['externamente é exatamente o que vivemos', 'culturalSync'], '0')),
+        testimonial: getVal(['trabalhar aí', 'testimonial']),
+        managerExample: parseInt(getVal(['gestor direto age como um exemplo', 'managerExample'], '0')),
+        leadershipAmbassador: getVal(['lideranças (como um todo) atuam', 'leadershipAmbassador']),
+        psychologicalSafety: parseInt(getVal(['segurança na minha equipe', 'psychologicalSafety'], '0')),
+        safeSpaceForErrors: parseInt(getVal(['espaço seguro" para admitir erros', 'safeSpaceForErrors'], '0')),
+        enps: parseInt(getVal(['recomendaria a Consistem', 'enps'], '0')),
+        recognitionFeeling: parseInt(getVal(['reconhecidos e valorizados', 'recognitionFeeling'], '0')),
+        recognitionTypes: getVal(['formas de reconhecimento prefere', 'recognitionTypes']),
+        elogioCanal: getVal(['elogiar e agradecer publicamente', 'elogioCanal']),
+        legacy: parseInt(getVal(['deixar um legado', 'legacy'], '0')),
+        mentorship: getVal(['programa estruturado de Mentoria', 'mentorship']),
+        priorityActions: getVal(['faria mais diferença positiva', 'priorityActions']),
+        communicationChange: getVal(['mudaria hoje na nossa comunicação', 'communicationChange']),
+        vision40Years: getVal(['marca de 40 anos', 'vision40Years']),
+      };
+    });
   } catch (error) {
     console.error('Error fetching survey data:', error);
     throw error;
@@ -130,13 +140,13 @@ export function processStats(
   
   const iaUsageHigh = (filteredData.filter(d => d.iaFrequency && (d.iaFrequency.includes('Diariamente') || d.iaFrequency.includes('Algumas vezes'))).length / total) * 100;
   
-  const legacyMotivation = filteredData.reduce((acc, curr) => acc + curr.legacy, 0) / total;
+  const legacyMotivation = (filteredData.reduce((acc, curr) => acc + curr.legacy, 0) / total - 1) * 1.25;
 
   // Area Engagement (always calculated from full data for comparison)
   const areas = Array.from(new Set(data.map(d => d.area)));
   const areaEngagement = areas.map(area => {
     const areaData = data.filter(d => d.area === area);
-    const score = areaData.reduce((acc, curr) => acc + curr.enps, 0) / areaData.length;
+    const score = (areaData.reduce((acc, curr) => acc + curr.enps, 0) / areaData.length) / 2; // Scale 0-10 to 0-5
     return { area, score };
   }).sort((a, b) => b.score - a.score);
 
@@ -151,11 +161,20 @@ export function processStats(
     return { area, percentage: areaData.length > 0 ? (highUsage / areaData.length) * 100 : 0 };
   }).sort((a, b) => b.percentage - a.percentage);
 
-  const recognitionScore = filteredData.reduce((acc, curr) => acc + curr.recognitionFeeling, 0) / total;
-  const identificationScore = filteredData.reduce((acc, curr) => acc + curr.pillarsIdentification, 0) / total;
-  const leadershipScore = filteredData.reduce((acc, curr) => acc + curr.managerExample, 0) / total;
-  const safetyScore = filteredData.reduce((acc, curr) => acc + curr.safeSpaceForErrors, 0) / total;
-  const culturalSyncScore = filteredData.reduce((acc, curr) => acc + curr.culturalSync, 0) / total;
+  // Calculate scores using average mapped to 0-5 scale for more fidelity as requested
+  // Formula: (Average - Min) / (Max - Min) * 5
+  const getAverageScore = (field: keyof SurveyResponse, maxScale: number = 5) => {
+    const sum = filteredData.reduce((acc, curr) => acc + (typeof curr[field] === 'number' ? (curr[field] as number) : 0), 0);
+    const avg = sum / total;
+    const minScale = 1; // Assuming Likert scales start at 1
+    return Math.max(0, ((avg - minScale) / (maxScale - minScale)) * 5);
+  };
+
+  const recognitionScore = getAverageScore('recognitionFeeling', 5);
+  const identificationScore = getAverageScore('pillarsIdentification', 10); // This one is 1-10
+  const leadershipScore = getAverageScore('managerExample', 5);
+  const safetyScore = getAverageScore('safeSpaceForErrors', 5);
+  const culturalSyncScore = getAverageScore('culturalSync', 5);
   const elogioInterest = (filteredData.filter(d => d.elogioCanal && d.elogioCanal.toLowerCase().includes('sim')).length / total) * 100;
 
   // Recognition Preferences
@@ -252,19 +271,30 @@ export function processStats(
     const aTotal = areaData.length;
     if (aTotal === 0) return { area, metrics: [] };
 
+    const getAreaAverage = (field: keyof SurveyResponse, maxScale: number = 5) => {
+      const sum = areaData.reduce((acc, curr) => acc + (typeof curr[field] === 'number' ? (curr[field] as number) : 0), 0);
+      const avg = sum / aTotal;
+      const minScale = 1;
+      return Math.max(0, ((avg - minScale) / (maxScale - minScale)) * 5);
+    };
+
+    const aPromoters = areaData.filter(d => d.enps >= 9).length;
+    const aDetractors = areaData.filter(d => d.enps <= 6).length;
+    const aEnpsScore = ((aPromoters - aDetractors) / aTotal) * 100;
+
     const metrics = [
-      { label: 'Identificação', score: areaData.reduce((acc, curr) => acc + curr.pillarsIdentification, 0) / aTotal },
-      { label: 'Liderança', score: areaData.reduce((acc, curr) => acc + curr.managerExample, 0) / aTotal },
-      { label: 'Segurança', score: areaData.reduce((acc, curr) => acc + curr.psychologicalSafety, 0) / aTotal },
-      { label: 'Reconhecimento', score: areaData.reduce((acc, curr) => acc + curr.recognitionFeeling, 0) / aTotal },
-      { label: 'eNPS', score: areaData.reduce((acc, curr) => acc + curr.enps, 0) / aTotal },
+      { label: 'Identificação', score: getAreaAverage('pillarsIdentification', 10) },
+      { label: 'Liderança', score: getAreaAverage('managerExample', 5) },
+      { label: 'Segurança', score: getAreaAverage('safeSpaceForErrors', 5) },
+      { label: 'Reconhecimento', score: getAreaAverage('recognitionFeeling', 5) },
+      { label: 'eNPS', score: (aEnpsScore + 100) / 40 }, // Scale -100/100 to 0-5
     ];
 
     return {
       area,
       metrics: metrics.map(m => ({
         ...m,
-        color: m.score >= 8.5 ? '#049C7A' : m.score >= 7 ? '#F27D26' : '#E84F3D'
+        color: m.score >= 3.75 ? '#049C7A' : m.score >= 2.5 ? '#F27D26' : '#E84F3D'
       }))
     };
   });
@@ -283,6 +313,14 @@ export function processStats(
     const topAction = Object.entries(areaActionMap)
       .sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
 
+    const getAreaAverage = (field: keyof SurveyResponse, maxScale: number = 5) => {
+      if (aTotal === 0) return 0;
+      const sum = areaData.reduce((acc, curr) => acc + (typeof curr[field] === 'number' ? (curr[field] as number) : 0), 0);
+      const avg = sum / aTotal;
+      const minScale = 1;
+      return Math.max(0, ((avg - minScale) / (maxScale - minScale)) * 5);
+    };
+
     const aPromoters = areaData.filter(d => d.enps >= 9).length;
     const aPassives = areaData.filter(d => d.enps >= 7 && d.enps <= 8).length;
     const aDetractors = areaData.filter(d => d.enps <= 6).length;
@@ -297,10 +335,10 @@ export function processStats(
         passives: aTotal > 0 ? (aPassives / aTotal) * 100 : 0,
         detractors: aTotal > 0 ? (aDetractors / aTotal) * 100 : 0
       },
-      seguranca: aTotal > 0 ? areaData.reduce((acc, curr) => acc + curr.psychologicalSafety, 0) / aTotal : 0,
-      lideranca: aTotal > 0 ? areaData.reduce((acc, curr) => acc + curr.managerExample, 0) / aTotal : 0,
-      identificacao: aTotal > 0 ? areaData.reduce((acc, curr) => acc + curr.pillarsIdentification, 0) / aTotal : 0,
-      reconhecimento: aTotal > 0 ? areaData.reduce((acc, curr) => acc + curr.recognitionFeeling, 0) / aTotal : 0,
+      seguranca: getAreaAverage('safeSpaceForErrors', 5),
+      lideranca: getAreaAverage('managerExample', 5),
+      identificacao: getAreaAverage('pillarsIdentification', 10),
+      reconhecimento: getAreaAverage('recognitionFeeling', 5),
       topPriorityAction: topAction,
       iaUsage: aTotal > 0 ? (areaData.filter(d => d.iaFrequency && (d.iaFrequency.includes('Diariamente') || d.iaFrequency.includes('Algumas vezes'))).length / aTotal) * 100 : 0,
       mentorshipInterest: aTotal > 0 ? (areaData.filter(d => d.mentorship && d.mentorship.toLowerCase().includes('sim')).length / aTotal) * 100 : 0,
