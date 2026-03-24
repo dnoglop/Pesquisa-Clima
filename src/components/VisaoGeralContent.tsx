@@ -26,7 +26,7 @@ export function VisaoGeralContent({ stats }: VisaoGeralContentProps) {
 
   const enpsZone = stats.enpsScore >= 75 ? 'ZONA DE EXCELÊNCIA' : 
                    stats.enpsScore >= 50 ? 'ZONA DE QUALIDADE' : 
-                   stats.enpsScore >= 0 ? 'ZONA DE APERFEIÇOAMENTO' : 'ZONA CRÍTICA';
+                   stats.enpsScore >= 0 ? 'ZONA DE MELHORIA' : 'ZONA CRÍTICA';
 
   const enpsDistributionData = [
     { name: 'Promotores', value: stats.enpsDistribution.promoters, fill: '#049C7A' },
@@ -46,28 +46,28 @@ export function VisaoGeralContent({ stats }: VisaoGeralContentProps) {
           icon={<Target className="w-5 h-5 text-primary" />}
           label="Identificação"
           value={stats.identificationScore.toFixed(1)}
-          subValue="Com os pilares"
+          subValue="com os pilares da Consistem"
           tooltip={METRIC_DESCRIPTIONS.identificacao}
         />
         <StatCard 
           icon={<Users className="w-5 h-5 text-primary" />}
           label="Liderança"
           value={stats.leadershipScore.toFixed(1)}
-          subValue="Como embaixadora"
+          subValue="como embaixadora dos valores Consistem"
           tooltip={METRIC_DESCRIPTIONS.lideranca}
         />
         <StatCard 
           icon={<Shield className="w-5 h-5 text-primary" />}
           label="Segurança"
           value={stats.safetyScore.toFixed(1)}
-          subValue="Espaço para erro"
+          subValue="nota para espaço de ambiente seguro"
           tooltip={METRIC_DESCRIPTIONS.seguranca}
         />
         <StatCard 
           icon={<Verified className="w-5 h-5 text-white" />}
           label="Respostas"
           value={stats.totalResponses.toString()}
-          subValue="Total de envios"
+          subValue="valor total de respostas na pesquisa"
           highlight
           tooltip="Quantidade total de formulários respondidos e processados."
         />
@@ -77,7 +77,7 @@ export function VisaoGeralContent({ stats }: VisaoGeralContentProps) {
         {/* eNPS Distribuição */}
         <div className="glass-card p-6 sm:p-8 rounded-3xl relative overflow-hidden">
           <div className="flex justify-between items-start mb-4">
-            <h3 className="text-lg font-bold">Distribuição eNPS</h3>
+            <h3 className="text-variant-style">Distribuição eNPS</h3>
           </div>
           <div className="h-56 relative flex items-center justify-center">
             <ResponsiveContainer width="100%" height="100%">
@@ -122,7 +122,7 @@ export function VisaoGeralContent({ stats }: VisaoGeralContentProps) {
         <div ref={enpsRef} className="glass-card p-6 sm:p-8 rounded-3xl relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl" />
           <div className="flex justify-between items-start mb-4 relative z-10">
-            <h3 className="text-lg font-bold text-center w-full">NPS Total</h3>
+            <h3 className="text-variant-style text-center w-full">NPS Total</h3>
             <div className="absolute right-0">
               <ExportButton targetRef={enpsRef} fileName="enps-geral" />
             </div>
@@ -151,21 +151,21 @@ export function VisaoGeralContent({ stats }: VisaoGeralContentProps) {
                 </Pie>
               </PieChart>
             </ResponsiveContainer>
-            <div className="absolute inset-0 flex flex-col items-center justify-center pt-8 pointer-events-none">
-              <span className="text-6xl font-black text-on-surface leading-none drop-shadow-sm">
+            <div className="absolute inset-0 flex flex-col items-center justify-center pt-4 pointer-events-none">
+              <span className="text-5xl font-black text-on-surface leading-none drop-shadow-sm">
                 {stats.enpsScore.toFixed(0)}
               </span>
               <div className={cn(
-                "mt-3 px-4 py-1 rounded-full text-[10px] font-black tracking-widest uppercase",
+                "text-[10px] font-bold text-secondary uppercase tracking-[0.2em] mt-2",
                 stats.enpsScore >= 75 ? "bg-[#049C7A]/10 text-[#049C7A]" : 
-                stats.enpsScore >= 50 ? "bg-[#F27D26]/10 text-[#F27D26]" : "bg-[#E84F3D]/10 text-[#E84F3D]"
+                stats.enpsScore >= 50 ? "bg-[#F27D26]/10 text-[#F27D26]" : "text-[#E84F3D]"
               )}>
                 {enpsZone}
               </div>
             </div>
           </div>
           <div className="relative z-10 text-center">
-            <p className="text-[10px] text-secondary px-4 italic leading-relaxed max-w-[240px] mx-auto">
+            <p className="text-[15px] text-secondary px-4 italic leading-relaxed max-w-[360px] mx-auto">
               "O quanto você recomendaria a Consistem como um bom lugar para se trabalhar?"
             </p>
           </div>

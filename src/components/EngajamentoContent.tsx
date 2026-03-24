@@ -32,28 +32,28 @@ export function EngajamentoContent({ stats }: EngajamentoContentProps) {
           icon={<TrendingUp className="w-5 h-5 text-primary" />}
           label="eNPS Geral"
           value={stats.enpsScore.toFixed(1)}
-          subValue="Média de recomendação"
+          subValue="nota de indicação da Consistem"
           tooltip={ENGAJAMENTO_DESCRIPTIONS.enps}
         />
         <StatCard 
           icon={<Heart className="w-5 h-5 text-primary" />}
           label="Bem-estar"
           value={`${stats.habits.exercise.toFixed(0)}%`}
-          subValue="Praticam exercícios"
+          subValue="taxa de Consisters que praticam atividades"
           tooltip={ENGAJAMENTO_DESCRIPTIONS.bemEstar}
         />
         <StatCard 
           icon={<GraduationCap className="w-5 h-5 text-primary" />}
           label="Mentoria"
           value={`${stats.mentorshipInterest.toFixed(0)}%`}
-          subValue="Interesse em participar"
+          subValue="quantidade de interessados em participar"
           tooltip={ENGAJAMENTO_DESCRIPTIONS.mentoria}
         />
         <StatCard 
           icon={<History className="w-5 h-5 text-primary" />}
           label="Legado"
           value={stats.legacyMotivation.toFixed(1)}
-          subValue="Motivação em partilhar"
+          subValue="quantidade de pessoas que apoiam partilhar"
           tooltip="Média de motivação para documentar e partilhar conhecimentos (0-5)."
         />
       </div>
@@ -63,8 +63,8 @@ export function EngajamentoContent({ stats }: EngajamentoContentProps) {
         <div ref={iaRef} className="glass-card p-6 sm:p-8 rounded-3xl relative">
           <div className="flex justify-between items-start mb-6">
             <div>
-              <h3 className="text-variant-style">Engajamento IA</h3>
-              <p className="text-[10px] text-secondary">Uso frequente por área</p>
+              <h3 className="text-variant-style">Engajamento em IA</h3>
+              <p className="text-[10px] text-secondary">utilização diária por área</p>
             </div>
             <Brain className="w-5 h-5 text-primary/20" />
           </div>
@@ -177,7 +177,7 @@ function StatCard({ icon, label, value, subValue, tooltip }: { icon: React.React
             <p className="text-[10px] font-bold text-secondary uppercase tracking-widest">{label}</p>
             {tooltip && <InfoTooltip content={tooltip} />}
           </div>
-          <p className="text-2xl font-extrabold font-sora">{value}</p>
+          <p className="text-3xl font-extrabold font-sora">{value}</p>
         </div>
       </div>
       <p className="text-[10px] text-secondary">{subValue}</p>
