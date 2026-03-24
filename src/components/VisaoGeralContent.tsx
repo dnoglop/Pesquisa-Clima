@@ -264,38 +264,83 @@ export function VisaoGeralContent({ stats }: VisaoGeralContentProps) {
             </div>
             <ExportButton targetRef={infoSourcesRef} fileName="fontes-informacao" />
           </div>
-          <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart 
-                data={stats.infoSources.map(s => ({
-                  name: s.source.toUpperCase(),
-                  percentage: (s.count / stats.totalResponses) * 100
-                }))}
-                margin={{ top: 20, right: 10, left: -20, bottom: 20 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
-                <XAxis 
-                  dataKey="name" 
-                  axisLine={false} 
-                  tickLine={false} 
-                  tick={{ fontSize: 8, fontWeight: 700, fill: 'var(--secondary)' }}
-                  interval={0}
-                />
-                <YAxis hide />
-                <RechartsTooltip 
-                  cursor={{ fill: 'transparent' }}
-                  contentStyle={{ backgroundColor: '#1A181A', border: 'none', borderRadius: '12px', color: '#fff', fontSize: '10px' }}
-                  itemStyle={{ color: '#fff' }}
-                  formatter={(value: number) => [`${value.toFixed(0)}%`, 'Uso']}
-                />
-                <Bar 
-                  dataKey="percentage" 
-                  fill="#1A181A" 
-                  radius={[4, 4, 0, 0]} 
-                  barSize={40}
-                />
-              </BarChart>
-            </ResponsiveContainer>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <div className="h-64 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart 
+                  data={stats.infoSources.map((s, i) => ({
+                    name: s.source,
+                    shortName: `S${i + 1}`,
+                    percentage: (s.count / stats.totalResponses) * 100,
+                    fill: i === 0 ? '#E84F3D' : i === 1 ? '#049C7A' : i === 2 ? '#F27D26' : '#312D31'
+                  }))}
+                  margin={{ top: 20, right: 10, left: -20, bottom: 0 }}
+                >
+                  <defs>
+                    <linearGradient id="barGradient0" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#E84F3D" stopOpacity={1}/>
+                      <stop offset="100%" stopColor="#E84F3D" stopOpacity={0.6}/>
+                    </linearGradient>
+                    <linearGradient id="barGradient1" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#049C7A" stopOpacity={1}/>
+                      <stop offset="100%" stopColor="#049C7A" stopOpacity={0.6}/>
+                    </linearGradient>
+                    <linearGradient id="barGradient2" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#F27D26" stopOpacity={1}/>
+                      <stop offset="100%" stopColor="#F27D26" stopOpacity={0.6}/>
+                    </linearGradient>
+                    <linearGradient id="barGradient3" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#312D31" stopOpacity={1}/>
+                      <stop offset="100%" stopColor="#312D31" stopOpacity={0.6}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
+                  <XAxis 
+                    dataKey="shortName" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fontSize: 10, fontWeight: 800, fill: 'var(--secondary)' }}
+                  />
+                  <YAxis hide />
+                  <RechartsTooltip 
+                    cursor={{ fill: 'rgba(0,0,0,0.02)' }}
+                    contentStyle={{ backgroundColor: '#1A181A', border: 'none', borderRadius: '16px', color: '#fff', fontSize: '10px', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.3)' }}
+                    itemStyle={{ color: '#fff' }}
+                    formatter={(value: number, name: string, props: any) => [`${value.toFixed(0)}%`, props.payload.name]}
+                  />
+                  <Bar 
+                    dataKey="percentage" 
+                    radius={[6, 6, 0, 0]} 
+                    barSize={32}
+                  >
+                    {stats.infoSources.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={`url(#barGradient${index % 4})`} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div className="space-y-3">
+              <p className="text-[10px] font-black text-secondary uppercase tracking-widest mb-4">Legenda de Canais</p>
+              {stats.infoSources.map((s, i) => (
+                <div key={i} className="flex items-start gap-3 group">
+                  <div 
+                    className="w-2.5 h-2.5 rounded-full mt-1 shrink-0 shadow-sm" 
+                    style={{ backgroundColor: i === 0 ? '#E84F3D' : i === 1 ? '#049C7A' : i === 2 ? '#F27D26' : '#312D31' }}
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[10px] font-bold text-on-surface leading-tight group-hover:text-primary transition-colors">
+                      {s.source}
+                    </p>
+                    <p className="text-[9px] text-secondary font-medium uppercase tracking-tighter">
+                      {((s.count / stats.totalResponses) * 100).toFixed(0)}% dos respondentes
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

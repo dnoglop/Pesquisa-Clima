@@ -13,6 +13,7 @@ async function startServer() {
   // API Route to proxy Google Apps Script
   app.get("/api/survey-data", async (req, res) => {
     const API_URL = 'https://script.google.com/macros/s/AKfycbzz7O1shFzKHoWIQebIdp5sTdqNAzAkZzVO41tpGhMknNiKaKmNxZ2sD4JYe7Fs47FI/exec';
+    const FALLBACK_CSV_URL = 'https://docs.google.com/spreadsheets/d/1uAUb9NnJe9JNFu-FqY1tOmIcQFjJZNACLsOHHufBU7w/export?format=csv';
 
     try {
       console.log('Fetching from Google Apps Script API...');
