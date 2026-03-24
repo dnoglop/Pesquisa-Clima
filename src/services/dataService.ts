@@ -1,50 +1,65 @@
 import Papa from 'papaparse';
 import { SurveyResponse, DashboardStats } from '../types';
 
-const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1uAUb9NnJe9JNFu-FqY1tOmIcQFjJZNACLsOHHufBU7w/export?format=csv';
+const API_URL = '/api/survey-data';
 
 export async function fetchSurveyData(): Promise<SurveyResponse[]> {
-  return new Promise((resolve, reject) => {
-    Papa.parse(SHEET_URL, {
-      download: true,
-      header: true,
-      skipEmptyLines: true,
-      complete: (results) => {
-        const data = results.data.map((row: any) => ({
-          submissionId: row['Submission ID'],
-          respondentId: row['Respondent ID'],
-          submittedAt: row['Submitted at'],
-          area: row['Em qual grupo de área você atua hoje?'],
-          hobbies: row['Quais são os seus hobbies no tempo livre? (selecione até 3)'],
-          exercise: row['Pratica exercício físico?'],
-          infoSource: row['Onde se informa mais sobre as notícias do dia?'],
-          iaFrequency: row['Com que frequência utiliza ferramentas de IA (como Gemini) no seu dia a dia?'],
-          personality: row['Se a nossa empresa fosse uma pessoa, quais adjetivos melhor a descreveriam? (selecione até 3)'],
-          valuePerception: row['Qual destas frases melhor define o que fazemos aqui hoje?'],
-          pillarsIdentification: parseInt(row['Conheço, entendo e identifico-me com os pilares da Consistem (Relacionamento, comprometimento, qualidade, evolução e transparência)']),
-          culturalSync: parseInt(row['O que comunicamos (nos nossos canais) aos clientes externamente é exatamente o que vivemos aqui dentro.']),
-          testimonial: row['Se um amigo te perguntasse "Como é trabalhar aí?", o que você diria honestamente nos primeiros 10 segundos?'],
-          managerExample: parseInt(row['O meu gestor direto age como um exemplo prático da cultura e dos valores da Consistem.']),
-          leadershipAmbassador: row['Você sente que as lideranças (como um todo) atuam como embaixadoras da marca ou como crítica da marca diante das equipes?'],
-          psychologicalSafety: parseInt(row['Sinto segurança na minha equipe para dar opiniões, propor ideias e inovar.']),
-          safeSpaceForErrors: parseInt(row['O quanto você sente que temos "espaço seguro" para admitir erros sem que isso vire um julgamento pessoal?']),
-          enps: parseInt(row['De 0 a 10, o quanto você recomendaria a Consistem como um excelente lugar para se trabalhar a um amigo ou familiar?']),
-          recognitionFeeling: parseInt(row['Sinto que o meu trabalho e o meu esforço diário são reconhecidos e valorizados pela empresa.']),
-          recognitionTypes: row['Que formas de reconhecimento prefere? (Selecione até 2)'],
-          elogioCanal: row['Gostaria de ter um canal oficial e aberto para elogiar e agradecer publicamente aos colegas de trabalho que me ajudam.'],
-          legacy: parseInt(row['Eu me sinto motivado(a) a documentar e partilhar os meus conhecimentos e processos com o restante da empresa para deixar um legado.']),
-          mentorship: row['Teria muito interesse em participar num programa estruturado de Mentoria (seja para aprender com os mais experientes ou para ensinar).'],
-          priorityActions: row['Pensando no que faria mais diferença positiva no seu dia a dia hoje, quais destas ações gostaria de ver a Consistem a lançar primeiro?'],
-          communicationChange: row['O que você mudaria hoje na nossa comunicação para que ela parecesse mais "a nossa cara"?'],
-          vision40Years: row['Pensando na nossa marca de 40 anos, o que você acredita que a Consistem precisa começar a fazer HOJE para ser uma empresa ainda melhor nas próximas décadas?'],
-        }));
-        resolve(data);
-      },
-      error: (error) => {
-        reject(error);
-      },
-    });
-  });
+  try {
+    const response = await fetch(API_URL);
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(`HTTP error! status: ${response.status} ${errorData.error || ''}`);
+    }
+
+    const data = await response.json();
+    
+    let rows: any[] = [];
+    
+    // Check if we got a CSV fallback
+    if (data.csvData) {
+      const results = Papa.parse(data.csvData, {
+        header: true,
+        skipEmptyLines: true
+      });
+      rows = results.data;
+    } else {
+      // Handle different possible JSON structures from Apps Script
+      rows = Array.isArray(data) ? data : (data.data || data.rows || []);
+    }
+
+    return rows.map((row: any) => ({
+      submissionId: String(row['Submission ID'] || row['submissionId'] || ''),
+      respondentId: String(row['Respondent ID'] || row['respondentId'] || ''),
+      submittedAt: String(row['Submitted at'] || row['submittedAt'] || ''),
+      area: String(row['Em qual grupo de área você atua hoje?'] || row['area'] || ''),
+      hobbies: String(row['Quais são os seus hobbies no tempo livre? (selecione até 3)'] || row['hobbies'] || ''),
+      exercise: String(row['Pratica exercício físico?'] || row['exercise'] || ''),
+      infoSource: String(row['Onde se informa mais sobre as notícias do dia?'] || row['infoSource'] || ''),
+      iaFrequency: String(row['Com que frequência utiliza ferramentas de IA (como Gemini) no seu dia a dia?'] || row['iaFrequency'] || ''),
+      personality: String(row['Se a nossa empresa fosse uma pessoa, quais adjetivos melhor a descreveriam? (selecione até 3)'] || row['personality'] || ''),
+      valuePerception: String(row['Qual destas frases melhor define o que fazemos aqui hoje?'] || row['valuePerception'] || ''),
+      pillarsIdentification: parseInt(String(row['Conheço, entendo e identifico-me com os pilares da Consistem (Relacionamento, comprometimento, qualidade, evolução e transparência)'] || row['pillarsIdentification'] || '0')),
+      culturalSync: parseInt(String(row['O que comunicamos (nos nossos canais) aos clientes externamente é exatamente o que vivemos aqui dentro.'] || row['culturalSync'] || '0')),
+      testimonial: String(row['Se um amigo te perguntasse "Como é trabalhar aí?", o que você diria honestamente nos primeiros 10 segundos?'] || row['testimonial'] || ''),
+      managerExample: parseInt(String(row['O meu gestor direto age como um exemplo prático da cultura e dos valores da Consistem.'] || row['managerExample'] || '0')),
+      leadershipAmbassador: String(row['Você sente que as lideranças (como um todo) atuam como embaixadoras da marca ou como crítica da marca diante das equipes?'] || row['leadershipAmbassador'] || ''),
+      psychologicalSafety: parseInt(String(row['Sinto segurança na minha equipe para dar opiniões, propor ideias e inovar.'] || row['psychologicalSafety'] || '0')),
+      safeSpaceForErrors: parseInt(String(row['O quanto você sente que temos "espaço seguro" para admitir erros sem que isso vire um julgamento pessoal?'] || row['safeSpaceForErrors'] || '0')),
+      enps: parseInt(String(row['De 0 a 10, o quanto você recomendaria a Consistem como um excelente lugar para se trabalhar a um amigo ou familiar?'] || row['enps'] || '0')),
+      recognitionFeeling: parseInt(String(row['Sinto que o meu trabalho e o meu esforço diário são reconhecidos e valorizados pela empresa.'] || row['recognitionFeeling'] || '0')),
+      recognitionTypes: String(row['Que formas de reconhecimento prefere? (Selecione até 2)'] || row['recognitionTypes'] || ''),
+      elogioCanal: String(row['Gostaria de ter um canal oficial e aberto para elogiar e agradecer publicamente aos colegas de trabalho que me ajudam.'] || row['elogioCanal'] || ''),
+      legacy: parseInt(String(row['Eu me sinto motivado(a) a documentar e partilhar os meus conhecimentos e processos com o restante da empresa para deixar um legado.'] || row['legacy'] || '0')),
+      mentorship: String(row['Teria muito interesse em participar num programa estruturado de Mentoria (seja para aprender com os mais experientes ou para ensinar).'] || row['mentorship'] || ''),
+      priorityActions: String(row['Pensando no que faria mais diferença positiva no seu dia a dia hoje, quais destas ações gostaria de ver a Consistem a lançar primeiro?'] || row['priorityActions'] || ''),
+      communicationChange: String(row['O que você mudaria hoje na nossa comunicação para que ela parecesse mais "a nossa cara"?'] || row['communicationChange'] || ''),
+      vision40Years: String(row['Pensando na nossa marca de 40 anos, o que você acredita que a Consistem precisa começar a fazer HOJE para ser uma empresa ainda melhor nas próximas décadas?'] || row['vision40Years'] || ''),
+    }));
+  } catch (error) {
+    console.error('Error fetching survey data:', error);
+    throw error;
+  }
 }
 
 export function processStats(

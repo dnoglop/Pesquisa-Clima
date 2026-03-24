@@ -75,86 +75,100 @@ export function VisaoGeralContent({ stats }: VisaoGeralContentProps) {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
         {/* eNPS Distribuição */}
-        <div className="glass-card p-6 sm:p-8 rounded-3xl relative">
+        <div className="glass-card p-6 sm:p-8 rounded-3xl relative overflow-hidden">
           <div className="flex justify-between items-start mb-4">
             <h3 className="text-lg font-bold">Distribuição eNPS</h3>
           </div>
-          <div className="h-48 relative flex items-center justify-center">
+          <div className="h-56 relative flex items-center justify-center">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={enpsDistributionData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={50}
-                  outerRadius={70}
-                  paddingAngle={5}
+                  innerRadius={65}
+                  outerRadius={85}
+                  paddingAngle={8}
                   dataKey="value"
                   stroke="none"
+                  cornerRadius={6}
                 >
                   {enpsDistributionData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.fill} />
                   ))}
                 </Pie>
                 <RechartsTooltip 
-                  contentStyle={{ backgroundColor: '#1A181A', border: 'none', borderRadius: '12px', color: '#fff' }}
-                  itemStyle={{ color: '#fff' }}
+                  contentStyle={{ backgroundColor: 'rgba(26, 24, 26, 0.95)', border: 'none', borderRadius: '16px', color: '#fff', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.3)' }}
+                  itemStyle={{ color: '#fff', fontSize: '12px', fontWeight: 600 }}
                 />
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <span className="text-4xl font-black text-on-surface">{stats.enpsScore.toFixed(0)}</span>
-              <span className="text-[10px] font-bold text-secondary uppercase tracking-[0.2em] mt-1">Score eNPS</span>
+              <span className="text-5xl font-black text-on-surface leading-none">{stats.enpsScore.toFixed(0)}</span>
+              <span className="text-[10px] font-bold text-secondary uppercase tracking-[0.2em] mt-2">Score eNPS</span>
             </div>
           </div>
-          <div className="mt-4 space-y-2">
+          <div className="mt-2 grid grid-cols-3 gap-2">
             {enpsDistributionData.map((item) => (
-              <div key={item.name} className="flex items-center justify-between text-[10px] font-bold">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.fill }}></div>
-                  <span className="text-secondary uppercase">{item.name}</span>
-                </div>
-                <span>{item.value.toFixed(0)}%</span>
+              <div key={item.name} className="flex flex-col items-center p-2 rounded-2xl bg-on-surface/5 border border-outline-variant/5">
+                <span className="text-[8px] font-bold text-secondary uppercase tracking-wider mb-1">{item.name}</span>
+                <span className="text-sm font-black" style={{ color: item.fill }}>{item.value.toFixed(0)}%</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* eNPS Geral / NPS Total */}
-        <div ref={enpsRef} className="glass-card p-6 sm:p-8 rounded-3xl relative bg-[#1A181A] text-white">
-          <div className="flex justify-between items-start mb-4">
+        <div ref={enpsRef} className="glass-card p-6 sm:p-8 rounded-3xl relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl" />
+          <div className="flex justify-between items-start mb-4 relative z-10">
             <h3 className="text-lg font-bold text-center w-full">NPS Total</h3>
-            <ExportButton targetRef={enpsRef} fileName="enps-geral" />
+            <div className="absolute right-0">
+              <ExportButton targetRef={enpsRef} fileName="enps-geral" />
+            </div>
           </div>
-          <div className="h-48 relative flex items-center justify-center">
+          <div className="h-56 relative flex items-center justify-center">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={enpsData}
+                  data={[
+                    { name: 'Score', value: Math.max(0, stats.enpsScore + 100), fill: stats.enpsScore >= 75 ? '#049C7A' : stats.enpsScore >= 50 ? '#F27D26' : '#E84F3D' },
+                    { name: 'Rest', value: 200 - Math.max(0, stats.enpsScore + 100), fill: 'rgba(0,0,0,0.05)' }
+                  ]}
                   cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
-                  startAngle={225}
-                  endAngle={-45}
+                  cy="65%"
+                  innerRadius={75}
+                  outerRadius={95}
+                  startAngle={210}
+                  endAngle={-30}
                   paddingAngle={0}
                   dataKey="value"
                   stroke="none"
+                  cornerRadius={10}
                 >
-                  {enpsData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.fill} />
-                  ))}
+                  <Cell fill={stats.enpsScore >= 75 ? '#049C7A' : stats.enpsScore >= 50 ? '#F27D26' : '#E84F3D'} />
+                  <Cell fill="rgba(0,0,0,0.05)" />
                 </Pie>
               </PieChart>
             </ResponsiveContainer>
-            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <span className="text-4xl font-black">{stats.enpsScore.toFixed(0)}</span>
-              <span className="text-[10px] font-bold text-[#E84F3D] uppercase tracking-widest mt-1">{enpsZone}</span>
+            <div className="absolute inset-0 flex flex-col items-center justify-center pt-8 pointer-events-none">
+              <span className="text-6xl font-black text-on-surface leading-none drop-shadow-sm">
+                {stats.enpsScore.toFixed(0)}
+              </span>
+              <div className={cn(
+                "mt-3 px-4 py-1 rounded-full text-[10px] font-black tracking-widest uppercase",
+                stats.enpsScore >= 75 ? "bg-[#049C7A]/10 text-[#049C7A]" : 
+                stats.enpsScore >= 50 ? "bg-[#F27D26]/10 text-[#F27D26]" : "bg-[#E84F3D]/10 text-[#E84F3D]"
+              )}>
+                {enpsZone}
+              </div>
             </div>
           </div>
-          <p className="text-[10px] text-center text-secondary mt-4 px-4 italic">
-            "O quanto você recomendaria a Consistem como um bom lugar para se trabalhar?"
-          </p>
+          <div className="relative z-10 text-center">
+            <p className="text-[10px] text-secondary px-4 italic leading-relaxed max-w-[240px] mx-auto">
+              "O quanto você recomendaria a Consistem como um bom lugar para se trabalhar?"
+            </p>
+          </div>
         </div>
 
         {/* Distribuição por Área */}
