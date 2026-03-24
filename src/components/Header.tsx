@@ -38,7 +38,7 @@ export function Header({
     { id: 'cultura', label: 'Cultura', icon: Users },
     { id: 'comparativo', label: 'Comparativo', icon: GitCompare },
     { id: 'heatmap', label: 'Mapa de Calor', icon: Flame },
-    { id: 'feedback', label: 'Feedback', icon: MessageSquare },
+    { id: 'feedback', label: 'Voz do Time', icon: MessageSquare },
   ];
 
   return (

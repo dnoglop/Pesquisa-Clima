@@ -91,7 +91,11 @@ export function processStats(
     valuePerceptionRanking: [],
     communicationFeedback: [],
     visionFeedback: [],
-    totalResponses: 0
+    totalResponses: 0,
+    crossInsights: {
+      iaUsageVsEnps: [],
+      exerciseVsEnps: [],
+    }
   };
 
   const promoters = filteredData.filter(d => d.enps >= 9).length;
@@ -254,13 +258,37 @@ export function processStats(
   const comparisons = allAreas.map(area => {
     const areaData = data.filter(d => d.area === area);
     const aTotal = areaData.length;
+    
+    // Calculate top priority action for this area
+    const areaActionMap: Record<string, number> = {};
+    areaData.forEach(d => {
+      const actions = d.priorityActions.split(',').map(a => a.trim());
+      actions.forEach(a => { if (a) areaActionMap[a] = (areaActionMap[a] || 0) + 1; });
+    });
+    const topAction = Object.entries(areaActionMap)
+      .sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
+
+    const aPromoters = areaData.filter(d => d.enps >= 9).length;
+    const aPassives = areaData.filter(d => d.enps >= 7 && d.enps <= 8).length;
+    const aDetractors = areaData.filter(d => d.enps <= 6).length;
+
+    const aEnpsScore = aTotal > 0 ? ((aPromoters - aDetractors) / aTotal) * 100 : 0;
+
     return {
       area,
-      enps: aTotal > 0 ? areaData.reduce((acc, curr) => acc + curr.enps, 0) / aTotal : 0,
+      enps: aEnpsScore,
+      enpsDistribution: {
+        promoters: aTotal > 0 ? (aPromoters / aTotal) * 100 : 0,
+        passives: aTotal > 0 ? (aPassives / aTotal) * 100 : 0,
+        detractors: aTotal > 0 ? (aDetractors / aTotal) * 100 : 0
+      },
       seguranca: aTotal > 0 ? areaData.reduce((acc, curr) => acc + curr.psychologicalSafety, 0) / aTotal : 0,
       lideranca: aTotal > 0 ? areaData.reduce((acc, curr) => acc + curr.managerExample, 0) / aTotal : 0,
       identificacao: aTotal > 0 ? areaData.reduce((acc, curr) => acc + curr.pillarsIdentification, 0) / aTotal : 0,
       reconhecimento: aTotal > 0 ? areaData.reduce((acc, curr) => acc + curr.recognitionFeeling, 0) / aTotal : 0,
+      topPriorityAction: topAction,
+      iaUsage: aTotal > 0 ? (areaData.filter(d => d.iaFrequency && (d.iaFrequency.includes('Diariamente') || d.iaFrequency.includes('Algumas vezes'))).length / aTotal) * 100 : 0,
+      mentorshipInterest: aTotal > 0 ? (areaData.filter(d => d.mentorship && d.mentorship.toLowerCase().includes('sim')).length / aTotal) * 100 : 0,
     };
   });
 
@@ -296,6 +324,20 @@ export function processStats(
     areas: allAreas,
     heatmap,
     comparisons,
-    totalResponses: total
+    totalResponses: total,
+    crossInsights: {
+      iaUsageVsEnps: Array.from(new Set(filteredData.map(d => d.iaFrequency))).map(label => {
+        const group = filteredData.filter(d => d.iaFrequency === label);
+        const gPromoters = group.filter(d => d.enps >= 9).length;
+        const gDetractors = group.filter(d => d.enps <= 6).length;
+        return { label, enps: group.length > 0 ? ((gPromoters - gDetractors) / group.length) * 100 : 0 };
+      }).sort((a, b) => b.enps - a.enps),
+      exerciseVsEnps: Array.from(new Set(filteredData.map(d => d.exercise))).map(label => {
+        const group = filteredData.filter(d => d.exercise === label);
+        const gPromoters = group.filter(d => d.enps >= 9).length;
+        const gDetractors = group.filter(d => d.enps <= 6).length;
+        return { label, enps: group.length > 0 ? ((gPromoters - gDetractors) / group.length) * 100 : 0 };
+      }).sort((a, b) => b.enps - a.enps),
+    }
   };
 }

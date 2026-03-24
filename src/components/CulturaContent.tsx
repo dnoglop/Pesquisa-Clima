@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { DashboardStats } from '../types';
-import { Megaphone, Shield, Users, Target, Zap, Smile, Heart, MessageSquare } from 'lucide-react';
+import { Megaphone, Shield, Users, Target, MessageSquare } from 'lucide-react';
 import { motion } from 'motion/react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { ExportButton } from './ui/ExportButton';
@@ -15,7 +15,6 @@ export function CulturaContent({ stats }: CulturaContentProps) {
   const psychologicalSafetyRef = useRef<HTMLDivElement>(null);
   const personalityRef = useRef<HTMLDivElement>(null);
   const valuePerceptionRef = useRef<HTMLDivElement>(null);
-  const testimonialsRef = useRef<HTMLDivElement>(null);
 
   const COLORS = ['#049C7A', '#312D31', '#E84F3D', '#F27D26'];
 
@@ -193,68 +192,6 @@ export function CulturaContent({ stats }: CulturaContentProps) {
               </div>
             ))}
           </div>
-        </div>
-      </div>
-
-      <div ref={testimonialsRef} className="glass-card p-6 sm:p-8 rounded-3xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-32 -mt-32 blur-3xl" />
-        <div className="flex justify-between items-start mb-8 sm:mb-12 relative">
-          <div>
-            <h3 className="text-variant-style">Voz do Colaborador</h3>
-            <p className="text-xs sm:text-sm text-secondary">O que se diz honestamente nos primeiros 10 segundos</p>
-          </div>
-          <ExportButton targetRef={testimonialsRef} fileName="testemunhos-colaboradores" />
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative">
-          {stats.testimonials.map((t, i) => (
-            <motion.div 
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className={cn(
-                "p-6 sm:p-8 rounded-[2rem] relative flex flex-col justify-between min-h-[200px] transition-all hover:scale-[1.02]",
-                i % 3 === 0 ? "bg-[#1A181A] text-white" : 
-                i % 3 === 1 ? "bg-primary/5 border border-primary/10" : 
-                "bg-on-surface/5 border border-outline-variant/10"
-              )}
-            >
-              <Zap className={cn(
-                "absolute top-6 right-6 w-5 h-5",
-                i % 3 === 0 ? "text-primary/40" : "text-primary/20"
-              )} />
-              
-              <div className="relative">
-                <span className={cn(
-                  "text-4xl font-serif absolute -top-4 -left-2 opacity-20",
-                  i % 3 === 0 ? "text-white" : "text-primary"
-                )}>"</span>
-                <p className="text-sm sm:text-base italic leading-relaxed relative z-10 mb-6">
-                  {t.text}
-                </p>
-              </div>
-
-              <div className="flex items-center gap-4 pt-4 border-t border-white/10">
-                <div className={cn(
-                  "w-10 h-10 rounded-2xl flex items-center justify-center text-xs font-black",
-                  i % 3 === 0 ? "bg-white/10 text-white" : "bg-primary/10 text-primary"
-                )}>
-                  {t.role.charAt(0)}
-                </div>
-                <div>
-                  <p className={cn(
-                    "text-[10px] font-black uppercase tracking-[0.2em]",
-                    i % 3 === 0 ? "text-primary" : "text-on-surface"
-                  )}>Colaborador</p>
-                  <p className={cn(
-                    "text-[10px] font-bold uppercase tracking-wider",
-                    i % 3 === 0 ? "text-white/60" : "text-secondary"
-                  )}>{t.role}</p>
-                </div>
-              </div>
-            </motion.div>
-          ))}
         </div>
       </div>
     </div>

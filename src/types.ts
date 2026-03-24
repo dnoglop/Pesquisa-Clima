@@ -39,10 +39,14 @@ export interface HeatmapData {
 export interface AreaComparison {
   area: string;
   enps: number;
+  enpsDistribution: { promoters: number; passives: number; detractors: number };
   seguranca: number;
   lideranca: number;
   identificacao: number;
   reconhecimento: number;
+  topPriorityAction: string;
+  iaUsage: number;
+  mentorshipInterest: number;
 }
 
 export interface DashboardStats {
@@ -78,4 +82,8 @@ export interface DashboardStats {
   heatmap: HeatmapData[];
   comparisons: AreaComparison[];
   totalResponses: number;
+  crossInsights: {
+    iaUsageVsEnps: { label: string; enps: number }[];
+    exerciseVsEnps: { label: string; enps: number }[];
+  };
 }
