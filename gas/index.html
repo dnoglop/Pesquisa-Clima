@@ -102,24 +102,57 @@
     <div id="root"></div>
 
     <!-- React & Dependencies -->
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://unpkg.com/lucide-react"></script>
-    <script src="https://unpkg.com/recharts/umd/Recharts.js"></script>
+    <script src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/prop-types@15.8.1/prop-types.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7.23.12/babel.min.js"></script>
+    <script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js"></script>
+    <script src="https://unpkg.com/lucide@0.344.0/dist/umd/lucide.min.js"></script>
 
     <script type="text/babel">
+        // Wait for libraries to be available
         const { useState, useEffect, useMemo, useRef } = React;
+
+        // Safely get Recharts components
+        const RechartsSafe = typeof Recharts !== 'undefined' ? Recharts : {
+            ResponsiveContainer: ({children}) => <div>{children}</div>, 
+            PieChart: () => null, Pie: () => null, Cell: () => null, 
+            BarChart: () => null, Bar: () => null, XAxis: () => null, YAxis: () => null, CartesianGrid: () => null, 
+            Tooltip: () => null, Legend: () => null, Radar: () => null, RadarChart: () => null, 
+            PolarGrid: () => null, PolarAngleAxis: () => null, PolarRadiusAxis: () => null 
+        };
+
         const { 
             ResponsiveContainer, PieChart, Pie, Cell, 
             BarChart, Bar, XAxis, YAxis, CartesianGrid, 
             Tooltip: RechartsTooltip, Legend, Radar, RadarChart, 
             PolarGrid, PolarAngleAxis, PolarRadiusAxis 
-        } = Recharts;
+        } = RechartsSafe;
 
         const Icon = ({ name, className }) => {
-            const LucideIcon = LucideReact[name];
-            return LucideIcon ? <LucideIcon className={className} size={20} /> : null;
+            const iconRef = useRef(null);
+            
+            useEffect(() => {
+                if (iconRef.current && typeof lucide !== 'undefined') {
+                    iconRef.current.innerHTML = '';
+                    const iconData = lucide.icons[name];
+                    if (iconData) {
+                        const svg = lucide.createIcons({
+                            icons: { [name]: iconData },
+                            nameAttr: 'data-lucide'
+                        });
+                        // Simple way to render lucide in React without lucide-react
+                        const svgElement = lucide.icons[name].toSvg({
+                            class: className,
+                            width: 20,
+                            height: 20
+                        });
+                        iconRef.current.innerHTML = svgElement;
+                    }
+                }
+            }, [name, className]);
+
+            return <span ref={iconRef} className="inline-flex items-center justify-center" />;
         };
 
         // --- Data Processing Logic ---
@@ -127,7 +160,7 @@
         function processData(rawData) {
             if (!rawData || !Array.isArray(rawData) || rawData.length < 2) return [];
             
-            const headers = rawData[0];
+            const headers = rawData[0].map(h => String(h).trim());
             const rows = rawData.slice(1);
 
             return rows.map(row => {
@@ -167,15 +200,31 @@
             });
         }
 
+        function parseDate(dateVal) {
+            if (!dateVal) return null;
+            if (dateVal instanceof Date) return dateVal;
+            
+            const dateStr = String(dateVal);
+            // Handle DD/MM/YYYY
+            if (dateStr.includes('/')) {
+                const [day, month, year] = dateStr.split('/');
+                return new Date(year, month - 1, day);
+            }
+            // Handle YYYY-MM-DD
+            if (dateStr.includes('-')) {
+                return new Date(dateStr);
+            }
+            return new Date(dateStr);
+        }
+
         function processStats(data, selectedArea = 'Todas', startDate, endDate) {
             let filteredData = selectedArea === 'Todas' ? data : data.filter(d => d.area === selectedArea);
             
             if (startDate) {
                 const start = new Date(startDate);
                 filteredData = filteredData.filter(d => {
-                    const [day, month, year] = d.submittedAt.split('/');
-                    const date = new Date(`${year}-${month}-${day}`);
-                    return date >= start;
+                    const date = parseDate(d.submittedAt);
+                    return date && date >= start;
                 });
             }
             
@@ -183,9 +232,8 @@
                 const end = new Date(endDate);
                 end.setHours(23, 59, 59, 999);
                 filteredData = filteredData.filter(d => {
-                    const [day, month, year] = d.submittedAt.split('/');
-                    const date = new Date(`${year}-${month}-${day}`);
-                    return date <= end;
+                    const date = parseDate(d.submittedAt);
+                    return date && date <= end;
                 });
             }
 
