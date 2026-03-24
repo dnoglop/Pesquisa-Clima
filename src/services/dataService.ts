@@ -109,7 +109,14 @@ export function processStats(
     recognitionPreferences: [],
     iaFrequencyBreakdown: [],
     habits: { exercise: 0, hobbies: 0 }, testimonials: [], personalityTraits: [],
-    leadershipSentiment: [], priorityActions: [], infoSources: [],
+    leadershipSentiment: [], 
+    priorityActions: [
+      { action: 'Maior investimento em treinos', count: 0 },
+      { action: 'cursos e desenvolvimento técnico.', count: 0 },
+      { action: 'Melhoria clara nos canais de comunicação interna (saber o que se passa na empresa).', count: 0 },
+      { action: 'Programas de reconhecimento e premiação mais transparentes.', count: 0 }
+    ], 
+    infoSources: [],
     areas: allAreas,
     heatmap: [],
     comparisons: [],
@@ -123,13 +130,13 @@ export function processStats(
     }
   };
 
+  const enpsScore = (Math.ceil(filteredData.reduce((acc, curr) => acc + curr.enps, 0) / total) / 10) * 100;
+  
+  // eNPS Distribution (keeping for context)
   const promoters = filteredData.filter(d => d.enps >= 9).length;
   const passives = filteredData.filter(d => d.enps >= 7 && d.enps <= 8).length;
   const detractors = filteredData.filter(d => d.enps <= 6).length;
   
-  const enpsScore = ((promoters - detractors) / total) * 100;
-  
-  // eNPS Distribution
   const enpsDistribution = {
     promoters: (promoters / total) * 100,
     passives: (passives / total) * 100,
@@ -138,15 +145,16 @@ export function processStats(
 
   const mentorshipInterest = (filteredData.filter(d => d.mentorship && d.mentorship.toLowerCase().includes('sim')).length / total) * 100;
   
-  const iaUsageHigh = (filteredData.filter(d => d.iaFrequency && (d.iaFrequency.includes('Diariamente') || d.iaFrequency.includes('Algumas vezes'))).length / total) * 100;
+  const iaUsageHigh = (filteredData.filter(d => d.iaFrequency && (d.iaFrequency.toLowerCase().includes('diariamente') || d.iaFrequency.toLowerCase().includes('semana'))).length / total) * 100;
   
-  const legacyMotivation = (filteredData.reduce((acc, curr) => acc + curr.legacy, 0) / total - 1) * 1.25;
+  const legacyMotivation = (Math.ceil(filteredData.reduce((acc, curr) => acc + curr.legacy, 0) / total) / 5) * 100;
 
   // Area Engagement (always calculated from full data for comparison)
   const areas = Array.from(new Set(data.map(d => d.area)));
   const areaEngagement = areas.map(area => {
     const areaData = data.filter(d => d.area === area);
-    const score = (areaData.reduce((acc, curr) => acc + curr.enps, 0) / areaData.length) / 2; // Scale 0-10 to 0-5
+    const avg = areaData.reduce((acc, curr) => acc + curr.enps, 0) / areaData.length;
+    const score = (Math.ceil(avg) / 10) * 100; // Scale 0-10 to 0-100%
     return { area, score };
   }).sort((a, b) => b.score - a.score);
 
@@ -161,20 +169,23 @@ export function processStats(
     return { area, percentage: areaData.length > 0 ? (highUsage / areaData.length) * 100 : 0 };
   }).sort((a, b) => b.percentage - a.percentage);
 
-  // Calculate scores using average mapped to 0-5 scale for more fidelity as requested
-  // Formula: (Average - Min) / (Max - Min) * 5
-  const getAverageScore = (field: keyof SurveyResponse, maxScale: number = 5) => {
+  // Calculate scores using average rounded up and converted to percentage
+  const getPercentageScore = (field: keyof SurveyResponse, maxScale: number = 5) => {
     const sum = filteredData.reduce((acc, curr) => acc + (typeof curr[field] === 'number' ? (curr[field] as number) : 0), 0);
     const avg = sum / total;
-    const minScale = 1; // Assuming Likert scales start at 1
-    return Math.max(0, ((avg - minScale) / (maxScale - minScale)) * 5);
+    // For identification (1-10), map to 1-5 first if maxScale is 5
+    let scaledAvg = avg;
+    if (field === 'pillarsIdentification' && maxScale === 5) {
+      scaledAvg = avg / 2;
+    }
+    return (Math.ceil(scaledAvg) / maxScale) * 100;
   };
 
-  const recognitionScore = getAverageScore('recognitionFeeling', 5);
-  const identificationScore = getAverageScore('pillarsIdentification', 10); // This one is 1-10
-  const leadershipScore = getAverageScore('managerExample', 5);
-  const safetyScore = getAverageScore('safeSpaceForErrors', 5);
-  const culturalSyncScore = getAverageScore('culturalSync', 5);
+  const recognitionScore = getPercentageScore('recognitionFeeling', 5);
+  const identificationScore = getPercentageScore('pillarsIdentification', 5); // User said 0-5 scale
+  const leadershipScore = getPercentageScore('managerExample', 5);
+  const safetyScore = getPercentageScore('safeSpaceForErrors', 5);
+  const culturalSyncScore = getPercentageScore('culturalSync', 5);
   const elogioInterest = (filteredData.filter(d => d.elogioCanal && d.elogioCanal.toLowerCase().includes('sim')).length / total) * 100;
 
   // Recognition Preferences
@@ -271,30 +282,31 @@ export function processStats(
     const aTotal = areaData.length;
     if (aTotal === 0) return { area, metrics: [] };
 
-    const getAreaAverage = (field: keyof SurveyResponse, maxScale: number = 5) => {
+    const getAreaPercentage = (field: keyof SurveyResponse, maxScale: number = 5) => {
       const sum = areaData.reduce((acc, curr) => acc + (typeof curr[field] === 'number' ? (curr[field] as number) : 0), 0);
       const avg = sum / aTotal;
-      const minScale = 1;
-      return Math.max(0, ((avg - minScale) / (maxScale - minScale)) * 5);
+      let scaledAvg = avg;
+      if (field === 'pillarsIdentification' && maxScale === 5) {
+        scaledAvg = avg / 2;
+      }
+      return (Math.ceil(scaledAvg) / maxScale) * 100;
     };
 
-    const aPromoters = areaData.filter(d => d.enps >= 9).length;
-    const aDetractors = areaData.filter(d => d.enps <= 6).length;
-    const aEnpsScore = ((aPromoters - aDetractors) / aTotal) * 100;
+    const aEnpsScore = (Math.ceil(areaData.reduce((acc, curr) => acc + curr.enps, 0) / aTotal) / 10) * 100;
 
     const metrics = [
-      { label: 'Identificação', score: getAreaAverage('pillarsIdentification', 10) },
-      { label: 'Liderança', score: getAreaAverage('managerExample', 5) },
-      { label: 'Segurança', score: getAreaAverage('safeSpaceForErrors', 5) },
-      { label: 'Reconhecimento', score: getAreaAverage('recognitionFeeling', 5) },
-      { label: 'eNPS', score: (aEnpsScore + 100) / 40 }, // Scale -100/100 to 0-5
+      { label: 'Identificação', score: getAreaPercentage('pillarsIdentification', 5) },
+      { label: 'Liderança', score: getAreaPercentage('managerExample', 5) },
+      { label: 'Segurança', score: getAreaPercentage('safeSpaceForErrors', 5) },
+      { label: 'Reconhecimento', score: getAreaPercentage('recognitionFeeling', 5) },
+      { label: 'eNPS', score: aEnpsScore }, // 0-100%
     ];
 
     return {
       area,
       metrics: metrics.map(m => ({
         ...m,
-        color: m.score >= 3.75 ? '#049C7A' : m.score >= 2.5 ? '#F27D26' : '#E84F3D'
+        color: m.score >= 75 ? '#049C7A' : m.score >= 50 ? '#F27D26' : '#E84F3D'
       }))
     };
   });
@@ -313,19 +325,21 @@ export function processStats(
     const topAction = Object.entries(areaActionMap)
       .sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
 
-    const getAreaAverage = (field: keyof SurveyResponse, maxScale: number = 5) => {
+    const getAreaPercentage = (field: keyof SurveyResponse, maxScale: number = 5) => {
       if (aTotal === 0) return 0;
       const sum = areaData.reduce((acc, curr) => acc + (typeof curr[field] === 'number' ? (curr[field] as number) : 0), 0);
       const avg = sum / aTotal;
-      const minScale = 1;
-      return Math.max(0, ((avg - minScale) / (maxScale - minScale)) * 5);
+      let scaledAvg = avg;
+      if (field === 'pillarsIdentification' && maxScale === 5) {
+        scaledAvg = avg / 2;
+      }
+      return (Math.ceil(scaledAvg) / maxScale) * 100;
     };
 
+    const aEnpsScore = aTotal > 0 ? (Math.ceil(areaData.reduce((acc, curr) => acc + curr.enps, 0) / aTotal) / 10) * 100 : 0;
     const aPromoters = areaData.filter(d => d.enps >= 9).length;
     const aPassives = areaData.filter(d => d.enps >= 7 && d.enps <= 8).length;
     const aDetractors = areaData.filter(d => d.enps <= 6).length;
-
-    const aEnpsScore = aTotal > 0 ? ((aPromoters - aDetractors) / aTotal) * 100 : 0;
 
     return {
       area,
@@ -335,12 +349,12 @@ export function processStats(
         passives: aTotal > 0 ? (aPassives / aTotal) * 100 : 0,
         detractors: aTotal > 0 ? (aDetractors / aTotal) * 100 : 0
       },
-      seguranca: getAreaAverage('safeSpaceForErrors', 5),
-      lideranca: getAreaAverage('managerExample', 5),
-      identificacao: getAreaAverage('pillarsIdentification', 10),
-      reconhecimento: getAreaAverage('recognitionFeeling', 5),
+      seguranca: getAreaPercentage('safeSpaceForErrors', 5),
+      lideranca: getAreaPercentage('managerExample', 5),
+      identificacao: getAreaPercentage('pillarsIdentification', 5),
+      reconhecimento: getAreaPercentage('recognitionFeeling', 5),
       topPriorityAction: topAction,
-      iaUsage: aTotal > 0 ? (areaData.filter(d => d.iaFrequency && (d.iaFrequency.includes('Diariamente') || d.iaFrequency.includes('Algumas vezes'))).length / aTotal) * 100 : 0,
+      iaUsage: aTotal > 0 ? (areaData.filter(d => d.iaFrequency && (d.iaFrequency.toLowerCase().includes('diariamente') || d.iaFrequency.toLowerCase().includes('semana'))).length / aTotal) * 100 : 0,
       mentorshipInterest: aTotal > 0 ? (areaData.filter(d => d.mentorship && d.mentorship.toLowerCase().includes('sim')).length / aTotal) * 100 : 0,
     };
   });
@@ -381,15 +395,15 @@ export function processStats(
     crossInsights: {
       iaUsageVsEnps: Array.from(new Set(filteredData.map(d => d.iaFrequency))).map(label => {
         const group = filteredData.filter(d => d.iaFrequency === label);
-        const gPromoters = group.filter(d => d.enps >= 9).length;
-        const gDetractors = group.filter(d => d.enps <= 6).length;
-        return { label, enps: group.length > 0 ? ((gPromoters - gDetractors) / group.length) * 100 : 0 };
+        const gAvg = group.reduce((acc, curr) => acc + curr.enps, 0) / group.length;
+        const gEnps = (Math.ceil(gAvg) / 10) * 100;
+        return { label, enps: group.length > 0 ? gEnps : 0 };
       }).sort((a, b) => b.enps - a.enps),
       exerciseVsEnps: Array.from(new Set(filteredData.map(d => d.exercise))).map(label => {
         const group = filteredData.filter(d => d.exercise === label);
-        const gPromoters = group.filter(d => d.enps >= 9).length;
-        const gDetractors = group.filter(d => d.enps <= 6).length;
-        return { label, enps: group.length > 0 ? ((gPromoters - gDetractors) / group.length) * 100 : 0 };
+        const gAvg = group.reduce((acc, curr) => acc + curr.enps, 0) / group.length;
+        const gEnps = (Math.ceil(gAvg) / 10) * 100;
+        return { label, enps: group.length > 0 ? gEnps : 0 };
       }).sort((a, b) => b.enps - a.enps),
     }
   };

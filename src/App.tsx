@@ -85,7 +85,7 @@ export default function App() {
           isRefreshing={loading}
         />
         
-        <main className="flex-1 flex flex-col min-h-screen pt-20 sm:pt-24">
+        <main className="flex-1 flex flex-col min-h-screen pt-14 sm:pt-20">
           <div className="flex-1 overflow-y-auto">
             {activeTab === 'geral' && stats && <VisaoGeralContent stats={stats} />}
             {activeTab === 'engajamento' && stats && <EngajamentoContent stats={stats} />}

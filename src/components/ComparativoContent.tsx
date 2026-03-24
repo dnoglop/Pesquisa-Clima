@@ -25,16 +25,11 @@ export function ComparativoContent({ stats }: ComparativoContentProps) {
     ];
 
     return metrics.map(m => {
-      const obj: any = { subject: m.label, fullMark: 10 };
+      const obj: any = { subject: m.label, fullMark: 100 };
       selectedAreas.forEach(area => {
         const areaStats = stats.comparisons.find(c => c.area === area);
         if (areaStats) {
-          let val = areaStats[m.key as keyof AreaComparison] as number;
-          // Normalize eNPS (-100 to 100) to 0-10 scale for radar consistency
-          if (m.key === 'enps') {
-            val = (val + 100) / 20;
-          }
-          obj[area] = val;
+          obj[area] = areaStats[m.key as keyof AreaComparison] as number;
         }
       });
       return obj;
@@ -56,17 +51,17 @@ export function ComparativoContent({ stats }: ComparativoContentProps) {
   const colors = ['#049C7A', '#F27D26', '#3B82F6']; // Updated colors for better contrast
 
   const metricsList = [
-    { key: 'enps', label: 'eNPS', isPercentage: false, max: 100 },
-    { key: 'seguranca', label: 'Segurança Psicológica', isPercentage: false, max: 10 },
-    { key: 'lideranca', label: 'Exemplo da Liderança', isPercentage: false, max: 10 },
-    { key: 'identificacao', label: 'Identificação Cultural', isPercentage: false, max: 10 },
-    { key: 'reconhecimento', label: 'Sentimento de Reconhecimento', isPercentage: false, max: 10 },
+    { key: 'enps', label: 'eNPS', isPercentage: true, max: 100 },
+    { key: 'seguranca', label: 'Segurança Psicológica', isPercentage: true, max: 100 },
+    { key: 'lideranca', label: 'Exemplo da Liderança', isPercentage: true, max: 100 },
+    { key: 'identificacao', label: 'Identificação Cultural', isPercentage: true, max: 100 },
+    { key: 'reconhecimento', label: 'Sentimento de Reconhecimento', isPercentage: true, max: 100 },
     { key: 'iaUsage', label: 'Adoção de IA', isPercentage: true, max: 100 },
     { key: 'mentorshipInterest', label: 'Interesse em Mentoria', isPercentage: true, max: 100 },
   ];
 
   return (
-    <div className="p-4 sm:p-8 mt-16 space-y-6 sm:space-y-8 max-w-7xl mx-auto">
+    <div className="p-4 mt-10 space-y-4 max-full mx-auto sm:space-y-8 max-w-7xl mx-auto">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 sm:mb-8 gap-4">
         <div>
           <h2 className="text-secondary-style tracking-tight">Comparativo Estratégico</h2>
@@ -99,7 +94,7 @@ export function ComparativoContent({ stats }: ComparativoContentProps) {
             <div className="flex justify-between items-start mb-6">
               <div>
                 <h3 className="text-variant-style">Equilíbrio Cultural</h3>
-                <p className="text-[10px] text-secondary">Escala normalizada (0-10) para comparação visual</p>
+                <p className="text-[10px] text-secondary">Escala de Engajamento (0-100%)</p>
               </div>
             </div>
             <div className="flex-1 min-h-0">
@@ -110,7 +105,7 @@ export function ComparativoContent({ stats }: ComparativoContentProps) {
                     dataKey="subject" 
                     tick={{ fontSize: 9, fontWeight: 700, fill: '#4b5563' }}
                   />
-                  <PolarRadiusAxis angle={30} domain={[0, 10]} tick={false} axisLine={false} />
+                  <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
                   {selectedAreas.map((area, idx) => (
                     <Radar
                       key={area}
@@ -183,7 +178,7 @@ export function ComparativoContent({ stats }: ComparativoContentProps) {
                               val === maxVal && areaValues.length > 1 ? "text-tertiary" : "text-on-surface/70",
                               val === minVal && areaValues.length > 1 && val !== maxVal ? "text-primary" : ""
                             )}>
-                              {val.toFixed(1)}{m.isPercentage ? '%' : ''}
+                              {val.toFixed(0)}%
                             </span>
                           </td>
                         ))}
@@ -243,7 +238,7 @@ export function ComparativoContent({ stats }: ComparativoContentProps) {
                       <p className="text-[10px] text-secondary">Perfil de Engajamento</p>
                     </div>
                     <div className="px-2 py-1 rounded bg-on-surface/5 text-[9px] font-bold text-primary">
-                      {areaStats.enps.toFixed(0)} NPS
+                      {areaStats.enps.toFixed(0)}% NPS
                     </div>
                   </div>
 
@@ -296,14 +291,14 @@ export function ComparativoContent({ stats }: ComparativoContentProps) {
                   <div className="flex-1 h-2 bg-on-surface/5 rounded-full overflow-hidden">
                     <motion.div 
                       initial={{ width: 0 }}
-                      animate={{ width: `${Math.max(0, (item.enps + 100) / 200 * 100)}%` }}
+                      animate={{ width: `${item.enps}%` }}
                       className={cn(
                         "h-full",
-                        item.enps > 50 ? "bg-tertiary" : item.enps > 0 ? "bg-primary" : "bg-destructive"
+                        item.enps >= 75 ? "bg-tertiary" : item.enps >= 50 ? "bg-primary" : "bg-destructive"
                       )}
                     />
                   </div>
-                  <div className="w-12 text-right text-[10px] font-black">{item.enps.toFixed(0)}</div>
+                  <div className="w-12 text-right text-[10px] font-black">{item.enps.toFixed(0)}%</div>
                 </div>
               ))}
             </div>
@@ -319,14 +314,14 @@ export function ComparativoContent({ stats }: ComparativoContentProps) {
                   <div className="flex-1 h-2 bg-on-surface/5 rounded-full overflow-hidden">
                     <motion.div 
                       initial={{ width: 0 }}
-                      animate={{ width: `${Math.max(0, (item.enps + 100) / 200 * 100)}%` }}
+                      animate={{ width: `${item.enps}%` }}
                       className={cn(
                         "h-full",
-                        item.enps > 50 ? "bg-tertiary" : item.enps > 0 ? "bg-primary" : "bg-destructive"
+                        item.enps >= 75 ? "bg-tertiary" : item.enps >= 50 ? "bg-primary" : "bg-destructive"
                       )}
                     />
                   </div>
-                  <div className="w-12 text-right text-[10px] font-black">{item.enps.toFixed(0)}</div>
+                  <div className="w-12 text-right text-[10px] font-black">{item.enps.toFixed(0)}%</div>
                 </div>
               ))}
             </div>

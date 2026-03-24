@@ -26,45 +26,45 @@ export function EngajamentoContent({ stats }: EngajamentoContentProps) {
   const iaRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div className="p-4 sm:p-8 mt-16 space-y-8 max-w-7xl mx-auto">
+    <div className="p-4 mt-10 space-y-4 max-full mx-auto max-w-7xl mx-auto">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <StatCard 
           icon={<TrendingUp className="w-5 h-5 text-primary" />}
           label="eNPS Geral"
           value={stats.enpsScore.toFixed(1)}
-          subValue="nota de indicação da Consistem"
+          subValue="Média de recomendação"
           tooltip={ENGAJAMENTO_DESCRIPTIONS.enps}
         />
         <StatCard 
           icon={<Heart className="w-5 h-5 text-primary" />}
           label="Bem-estar"
           value={`${stats.habits.exercise.toFixed(0)}%`}
-          subValue="taxa de Consisters que praticam atividades"
+          subValue="Praticam exercícios"
           tooltip={ENGAJAMENTO_DESCRIPTIONS.bemEstar}
         />
         <StatCard 
           icon={<GraduationCap className="w-5 h-5 text-primary" />}
           label="Mentoria"
           value={`${stats.mentorshipInterest.toFixed(0)}%`}
-          subValue="quantidade de interessados em participar"
+          subValue="Interesse em participar"
           tooltip={ENGAJAMENTO_DESCRIPTIONS.mentoria}
         />
         <StatCard 
           icon={<History className="w-5 h-5 text-primary" />}
           label="Legado"
-          value={stats.legacyMotivation.toFixed(1)}
-          subValue="quantidade de pessoas que apoiam partilhar"
+          value={`${stats.legacyMotivation.toFixed(0)}%`}
+          subValue="Motivação em partilhar"
           tooltip="Média de motivação para documentar e partilhar conhecimentos (0-5)."
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
         {/* Coluna 1: IA */}
         <div ref={iaRef} className="glass-card p-6 sm:p-8 rounded-3xl relative">
           <div className="flex justify-between items-start mb-6">
             <div>
-              <h3 className="text-variant-style">Engajamento em IA</h3>
-              <p className="text-[10px] text-secondary">utilização diária por área</p>
+              <h3 className="text-variant-style">Engajamento IA</h3>
+              <p className="text-[10px] text-secondary">Uso frequente por área</p>
             </div>
             <Brain className="w-5 h-5 text-primary/20" />
           </div>
@@ -99,7 +99,7 @@ export function EngajamentoContent({ stats }: EngajamentoContentProps) {
             <Award className="w-5 h-5 text-primary/20" />
           </div>
           <div className="bg-on-surface/5 rounded-2xl p-6 mb-6 text-center">
-            <p className="text-4xl font-black text-[#E84F3D] mb-1">{stats.recognitionScore.toFixed(1)}</p>
+            <p className="text-4xl font-black text-[#E84F3D] mb-1">{`${stats.recognitionScore.toFixed(0)}%`}</p>
             <p className="text-[9px] font-bold text-secondary uppercase tracking-widest">Média de Valorização</p>
           </div>
           <div className="space-y-3">
@@ -113,23 +113,23 @@ export function EngajamentoContent({ stats }: EngajamentoContentProps) {
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Coluna 3: Ações Prioritárias */}
-        <div ref={actionsRef} className="glass-card p-6 sm:p-8 rounded-3xl relative bg-[#F27D26]/5 border-[#F27D26]/10">
-          <div className="flex justify-between items-start mb-6">
-            <h3 className="text-variant-style text-[#F27D26]">Prioridades</h3>
-            <TrendingUp className="w-5 h-5 text-[#F27D26]/20" />
-          </div>
-          <div className="space-y-3">
-            {stats.priorityActions.slice(0, 4).map((action, index) => (
-              <div key={index} className="flex items-center gap-3 p-3 rounded-xl bg-white/50 border border-[#F27D26]/5">
-                <div className="w-6 h-6 rounded-full bg-[#F27D26] text-white flex items-center justify-center shrink-0 text-[10px] font-bold">
-                  {index + 1}
-                </div>
-                <p className="text-[11px] font-bold leading-tight text-on-surface line-clamp-2">{action.action}</p>
+      {/* Ações Prioritárias - Full Width Style like Image */}
+      <div ref={actionsRef} className="py-12 relative">
+        <div className="flex justify-between items-center mb-12">
+          <h2 className="text-5xl font-black text-[#F27D26] tracking-tight">Prioridades</h2>
+          <ExportButton targetRef={actionsRef} fileName="prioridades" />
+        </div>
+        <div className="space-y-6">
+          {stats.priorityActions.slice(0, 4).map((action, index) => (
+            <div key={index} className="flex items-center gap-8 p-8 rounded-[32px] bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-outline-variant/5 group hover:shadow-[0_20px_50px_rgba(242,125,38,0.1)] transition-all duration-500">
+              <div className="w-14 h-14 rounded-full bg-[#F27D26] text-white flex items-center justify-center shrink-0 text-2xl font-black shadow-xl shadow-[#F27D26]/30">
+                {index + 1}
               </div>
-            ))}
-          </div>
+              <p className="text-2xl font-bold text-[#312D31] leading-tight">{action.action}</p>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -169,7 +169,7 @@ function StatCard({ icon, label, value, subValue, tooltip }: { icon: React.React
   return (
     <div className="glass-card p-6 rounded-3xl border border-outline-variant/10 hover:border-primary/30 transition-all group">
       <div className="flex items-center gap-4 mb-4">
-        <div className="p-3 rounded-2xl bg-on-surface/5 group-hover:bg-primary/10 transition-colors">
+        <div className="p-3 rounded-3xl bg-on-surface/5 group-hover:bg-primary/10 transition-colors">
           {icon}
         </div>
         <div className="flex-1">

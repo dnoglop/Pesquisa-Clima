@@ -54,9 +54,9 @@ export function HeatmapContent({ stats }: HeatmapContentProps) {
                       color: m.color,
                       border: `1px solid ${m.color}40`
                     }}
-                    title={`${m.label}: ${m.score.toFixed(1)}`}
+                    title={`${m.label}: ${m.score.toFixed(0)}%`}
                   >
-                    {m.score.toFixed(1)}
+                    {m.score.toFixed(0)}%
                   </div>
                 ))}
               </motion.div>
@@ -65,9 +65,9 @@ export function HeatmapContent({ stats }: HeatmapContentProps) {
         </div>
 
         <div className="mt-8 sm:mt-12 flex flex-wrap items-center justify-center gap-4 sm:gap-8 border-t border-outline-variant/10 pt-6 sm:pt-8">
-          <LegendItem color="#049C7A" label="Excelente (8.5+)" />
-          <LegendItem color="#F27D26" label="Atenção (7.0 - 8.4)" />
-          <LegendItem color="#E84F3D" label="Crítico (< 7.0)" />
+          <LegendItem color="#049C7A" label="Excelente (75%+)" />
+          <LegendItem color="#F27D26" label="Atenção (50% - 74%)" />
+          <LegendItem color="#E84F3D" label="Crítico (< 50%)" />
         </div>
       </div>
     </div>

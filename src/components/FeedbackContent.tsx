@@ -30,7 +30,7 @@ export function FeedbackContent({ stats }: { stats: DashboardStats }) {
   }, [stats.testimonials, selectedArea, searchTerm]);
 
   return (
-    <div className="p-4 sm:p-8 mt-16 space-y-8 max-w-7xl mx-auto">
+    <div className="p-4 mt-10 space-y-4 max-full max-w-7xl mx-auto">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8">
         <div>
           <h2 className="text-secondary-style tracking-tight">Voz do Time</h2>

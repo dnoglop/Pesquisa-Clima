@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { DashboardStats } from '../types';
 import { motion } from 'motion/react';
 import { PieChart, Pie, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Cell, BarChart, Bar } from 'recharts';
-import { Target, Users, Shield, Verified } from 'lucide-react';
+import { Target, Users, Shield, Verified, Award, TrendingUp } from 'lucide-react';
 import { InfoTooltip } from './ui/Tooltip';
 import { ExportButton } from './ui/ExportButton';
 import { cn } from '../lib/utils';
@@ -12,10 +12,10 @@ interface VisaoGeralContentProps {
 }
 
 const METRIC_DESCRIPTIONS = {
-  identificacao: "Mede o quanto os colaboradores conhecem e se sentem alinhados com os 5 pilares da Consistem. Calculado pela média das respostas de 1 a 10.",
-  lideranca: "Avalia se as lideranças são vistas como embaixadoras da marca. Baseado na percepção de exemplo prático dos gestores.",
-  seguranca: "O 'espaço seguro' para admitir erros sem julgamento pessoal. Essencial para inovação e aprendizado contínuo.",
-  reconhecimento: "Sentimento de que o esforço diário é valorizado pela empresa. Reflete a eficácia das políticas de feedback e elogio."
+  identificacao: "Mede o alinhamento com os 5 pilares da Consistem. Média arredondada para cima e convertida para porcentagem (0-100%).",
+  lideranca: "Avalia se as lideranças são vistas como embaixadoras da marca. Média arredondada para cima e convertida para porcentagem (0-100%).",
+  seguranca: "O 'espaço seguro' para admitir erros sem julgamento. Média arredondada para cima e convertida para porcentagem (0-100%).",
+  reconhecimento: "Sentimento de valorização do esforço diário. Média arredondada para cima e convertida para porcentagem (0-100%).",
 };
 
 export function VisaoGeralContent({ stats }: VisaoGeralContentProps) {
@@ -23,10 +23,11 @@ export function VisaoGeralContent({ stats }: VisaoGeralContentProps) {
   const distributionRef = useRef<HTMLDivElement>(null);
   const healthRef = useRef<HTMLDivElement>(null);
   const infoSourcesRef = useRef<HTMLDivElement>(null);
+  const actionsRef = useRef<HTMLDivElement>(null);
 
-  const enpsZone = stats.enpsScore >= 75 ? 'ZONA DE EXCELÊNCIA' : 
-                   stats.enpsScore >= 50 ? 'ZONA DE QUALIDADE' : 
-                   stats.enpsScore >= 0 ? 'ZONA DE MELHORIA' : 'ZONA CRÍTICA';
+  const enpsZone = stats.enpsScore >= 85 ? 'ZONA DE EXCELÊNCIA' : 
+                   stats.enpsScore >= 70 ? 'ZONA DE QUALIDADE' : 
+                   stats.enpsScore >= 50 ? 'ZONA DE MELHORIA' : 'ZONA CRÍTICA';
 
   const enpsDistributionData = [
     { name: 'Promotores', value: stats.enpsDistribution.promoters, fill: '#049C7A' },
@@ -40,34 +41,41 @@ export function VisaoGeralContent({ stats }: VisaoGeralContentProps) {
   ];
 
   return (
-    <div className="p-4 sm:p-8 mt-16 space-y-8 max-w-7xl mx-auto">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+    <div className="p-4 mt-10 space-y-4 max-full mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6">
         <StatCard 
           icon={<Target className="w-5 h-5 text-primary" />}
           label="Identificação"
-          value={stats.identificationScore.toFixed(1)}
-          subValue="com os pilares da Consistem"
+          value={`${stats.identificationScore.toFixed(0)}%`}
+          subValue="Com os pilares"
           tooltip={METRIC_DESCRIPTIONS.identificacao}
         />
         <StatCard 
           icon={<Users className="w-5 h-5 text-primary" />}
           label="Liderança"
-          value={stats.leadershipScore.toFixed(1)}
-          subValue="como embaixadora dos valores Consistem"
+          value={`${stats.leadershipScore.toFixed(0)}%`}
+          subValue="Como embaixadora"
           tooltip={METRIC_DESCRIPTIONS.lideranca}
         />
         <StatCard 
           icon={<Shield className="w-5 h-5 text-primary" />}
           label="Segurança"
-          value={stats.safetyScore.toFixed(1)}
-          subValue="nota para espaço de ambiente seguro"
+          value={`${stats.safetyScore.toFixed(0)}%`}
+          subValue="Espaço para erro"
           tooltip={METRIC_DESCRIPTIONS.seguranca}
+        />
+        <StatCard 
+          icon={<Award className="w-5 h-5 text-primary" />}
+          label="Reconhecimento"
+          value={`${stats.recognitionScore.toFixed(0)}%`}
+          subValue="Valorização"
+          tooltip={METRIC_DESCRIPTIONS.reconhecimento}
         />
         <StatCard 
           icon={<Verified className="w-5 h-5 text-white" />}
           label="Respostas"
           value={stats.totalResponses.toString()}
-          subValue="valor total de respostas na pesquisa"
+          subValue="Total de envios"
           highlight
           tooltip="Quantidade total de formulários respondidos e processados."
         />
@@ -104,8 +112,8 @@ export function VisaoGeralContent({ stats }: VisaoGeralContentProps) {
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <span className="text-5xl font-black text-on-surface leading-none">{stats.enpsScore.toFixed(0)}</span>
-              <span className="text-[10px] font-bold text-secondary uppercase tracking-[0.2em] mt-2">Score eNPS</span>
+              <span className="text-4xl font-black text-on-surface leading-none">{stats.enpsScore.toFixed(0)}%</span>
+              <span className="text-[10px] font-bold text-secondary uppercase tracking-[0.2em] mt-2">Média NPS</span>
             </div>
           </div>
           <div className="mt-2 grid grid-cols-3 gap-2">
@@ -132,8 +140,8 @@ export function VisaoGeralContent({ stats }: VisaoGeralContentProps) {
               <PieChart>
                 <Pie
                   data={[
-                    { name: 'Score', value: Math.max(0, stats.enpsScore + 100), fill: stats.enpsScore >= 75 ? '#049C7A' : stats.enpsScore >= 50 ? '#F27D26' : '#E84F3D' },
-                    { name: 'Rest', value: 200 - Math.max(0, stats.enpsScore + 100), fill: 'rgba(0,0,0,0.05)' }
+                    { name: 'Score', value: stats.enpsScore, fill: stats.enpsScore >= 85 ? '#049C7A' : stats.enpsScore >= 70 ? '#F27D26' : '#E84F3D' },
+                    { name: 'Rest', value: 100 - stats.enpsScore, fill: 'rgba(0,0,0,0.05)' }
                   ]}
                   cx="50%"
                   cy="65%"
@@ -146,26 +154,26 @@ export function VisaoGeralContent({ stats }: VisaoGeralContentProps) {
                   stroke="none"
                   cornerRadius={10}
                 >
-                  <Cell fill={stats.enpsScore >= 75 ? '#049C7A' : stats.enpsScore >= 50 ? '#F27D26' : '#E84F3D'} />
+                  <Cell fill={stats.enpsScore >= 85 ? '#049C7A' : stats.enpsScore >= 70 ? '#F27D26' : '#E84F3D'} />
                   <Cell fill="rgba(0,0,0,0.05)" />
                 </Pie>
               </PieChart>
             </ResponsiveContainer>
-            <div className="absolute inset-0 flex flex-col items-center justify-center pt-4 pointer-events-none">
-              <span className="text-5xl font-black text-on-surface leading-none drop-shadow-sm">
-                {stats.enpsScore.toFixed(0)}
+            <div className="absolute inset-0 flex flex-col items-center justify-center pt-8 pointer-events-none">
+              <span className="text-4xl font-black text-on-surface leading-none drop-shadow-sm">
+                {stats.enpsScore.toFixed(0)}%
               </span>
               <div className={cn(
-                "text-[10px] font-bold text-secondary uppercase tracking-[0.2em] mt-2",
-                stats.enpsScore >= 75 ? "bg-[#049C7A]/10 text-[#049C7A]" : 
-                stats.enpsScore >= 50 ? "bg-[#F27D26]/10 text-[#F27D26]" : "text-[#E84F3D]"
+                "mt-3 px-4 py-1 text-[10px] font-black tracking-widest uppercase",
+                stats.enpsScore >= 85 ? "text-[#049C7A]" : 
+                stats.enpsScore >= 70 ? "text-[#F27D26]" : "text-[#E84F3D]"
               )}>
                 {enpsZone}
               </div>
             </div>
           </div>
           <div className="relative z-10 text-center">
-            <p className="text-[15px] text-secondary px-4 italic leading-relaxed max-w-[360px] mx-auto">
+            <p className="text-[14px] text-secondary px-4 italic leading-relaxed max-w-[3600px] mx-auto">
               "O quanto você recomendaria a Consistem como um bom lugar para se trabalhar?"
             </p>
           </div>
@@ -342,6 +350,24 @@ export function VisaoGeralContent({ stats }: VisaoGeralContentProps) {
               ))}
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Ações Prioritárias - Full Width Style like Image */}
+      <div ref={actionsRef} className="py-12 relative">
+        <div className="flex justify-between items-center mb-12">
+          <h2 className="text-5xl font-black text-[#F27D26] tracking-tight">Prioridades</h2>
+          <ExportButton targetRef={actionsRef} fileName="prioridades" />
+        </div>
+        <div className="space-y-6">
+          {stats.priorityActions.slice(0, 4).map((action, index) => (
+            <div key={index} className="flex items-center gap-8 p-8 rounded-[32px] bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-outline-variant/5 group hover:shadow-[0_20px_50px_rgba(242,125,38,0.1)] transition-all duration-500">
+              <div className="w-14 h-14 rounded-full bg-[#F27D26] text-white flex items-center justify-center shrink-0 text-2xl font-black shadow-xl shadow-[#F27D26]/30">
+                {index + 1}
+              </div>
+              <p className="text-2xl font-bold text-[#312D31] leading-tight">{action.action}</p>
+            </div>
+          ))}
         </div>
       </div>
     </div>
