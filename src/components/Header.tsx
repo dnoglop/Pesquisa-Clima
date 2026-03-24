@@ -63,14 +63,14 @@ export function Header({
               key={item.id}
               onClick={() => setActiveTab(item.id)}
               className={cn(
-                "flex items-center gap-2 px-4 py-2 text-[10px] font-sora uppercase tracking-widest transition-all duration-300 rounded-xl whitespace-nowrap",
+                "flex items-center gap-2 px-3 py-1.5 text-[9px] font-sora uppercase tracking-widest transition-all duration-300 rounded-xl whitespace-nowrap",
                 activeTab === item.id 
                   ? "text-primary font-bold bg-white shadow-sm" 
                   : "text-secondary hover:text-on-surface hover:bg-white/50"
               )}
               title={item.label}
             >
-              <item.icon className={cn("w-4 h-4", activeTab === item.id && "fill-primary/10")} />
+              <item.icon className={cn("w-3.5 h-3.5", activeTab === item.id && "fill-primary/10")} />
               <span className="hidden lg:block">{item.label}</span>
             </button>
           ))}
@@ -104,8 +104,10 @@ export function Header({
       </div>
 
       {/* Mobile Navigation - Scrollable bar */}
-      <div className="md:hidden absolute top-20 left-0 right-0 bg-background/60 backdrop-blur-md border-b border-outline-variant/10 overflow-x-auto no-scrollbar">
-        <nav className="flex items-center gap-1 p-2 min-w-max justify-center w-full">
+      <div className="md:hidden absolute top-20 left-0 right-0 bg-background/60 backdrop-blur-md border-b border-outline-variant/10 flex flex-col">
+        <div className="p-2 border-b border-outline-variant/5">
+        </div>
+        <nav className="flex items-center gap-1 p-2 min-w-max justify-center w-full overflow-x-auto no-scrollbar">
           {menuItems.map((item) => (
             <button
               key={item.id}

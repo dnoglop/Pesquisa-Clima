@@ -5,29 +5,25 @@ import { MessageSquare, Quote, Eye, Megaphone, Filter, Search } from 'lucide-rea
 import { cn } from '../lib/utils';
 
 export function FeedbackContent({ stats }: { stats: DashboardStats }) {
-  const [selectedArea, setSelectedArea] = useState<string>('Todas');
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredCommunication = useMemo(() => {
     return stats.communicationFeedback
       .filter(item => item.text && item.text.trim() !== '' && item.text !== '""')
-      .filter(item => selectedArea === 'Todas' || item.area === selectedArea)
       .filter(item => item.text.toLowerCase().includes(searchTerm.toLowerCase()));
-  }, [stats.communicationFeedback, selectedArea, searchTerm]);
+  }, [stats.communicationFeedback, searchTerm]);
 
   const filteredVision = useMemo(() => {
     return stats.visionFeedback
       .filter(item => item.text && item.text.trim() !== '' && item.text !== '""')
-      .filter(item => selectedArea === 'Todas' || item.area === selectedArea)
       .filter(item => item.text.toLowerCase().includes(searchTerm.toLowerCase()));
-  }, [stats.visionFeedback, selectedArea, searchTerm]);
+  }, [stats.visionFeedback, searchTerm]);
 
   const filteredTestimonials = useMemo(() => {
     return stats.testimonials
       .filter(item => item.text && item.text.trim() !== '' && item.text !== '""')
-      .filter(item => selectedArea === 'Todas' || item.role === selectedArea)
       .filter(item => item.text.toLowerCase().includes(searchTerm.toLowerCase()));
-  }, [stats.testimonials, selectedArea, searchTerm]);
+  }, [stats.testimonials, searchTerm]);
 
   return (
     <div className="p-4 mt-10 space-y-4 max-full max-w-7xl mx-auto">
@@ -47,19 +43,6 @@ export function FeedbackContent({ stats }: { stats: DashboardStats }) {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 bg-surface-low border border-outline-variant/10 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
             />
-          </div>
-          <div className="relative flex-1 sm:w-64">
-            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary" />
-            <select 
-              value={selectedArea}
-              onChange={(e) => setSelectedArea(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-surface-low border border-outline-variant/10 rounded-xl text-xs appearance-none focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-            >
-              <option value="Todas">Todas as Áreas</option>
-              {stats.areas.map(area => (
-                <option key={area} value={area}>{area}</option>
-              ))}
-            </select>
           </div>
         </div>
       </div>

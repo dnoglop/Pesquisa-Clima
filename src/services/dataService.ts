@@ -3,6 +3,23 @@ import { SurveyResponse, DashboardStats } from '../types';
 
 const API_URL = '/api/survey-data';
 
+// Adicione esta lista com as opções exatas:
+const PRIORIDADES_POSSIVEIS = [
+  "Melhoria clara nos canais de comunicação interna (saber o que se passa na empresa).",
+  "Mais momentos de integração e descompressão entre as equipes.",
+  "Programas de reconhecimento e premiação mais transparentes.",
+  "Maior investimento em treinos, cursos e desenvolvimento técnico.",
+  "Ações focadas na saúde mental e bem-estar (ginástica laboral, palestras, etc.)"
+];
+
+const RECONHECIMENTO_POSSIVEIS = [
+  "Reconhecimento financeiro (bónus, prémios)",
+  "Reconhecimento público (ser elogiado em reuniões ou nos canais da empresa)",
+  "Reconhecimento privado (um feedback sincero 1:1 do gestor)",
+  "Tempo livre (folgas extra, maior flexibilidade)",
+  "Oportunidades de crescimento e novos desafios"
+];
+
 export async function fetchSurveyData(): Promise<SurveyResponse[]> {
   try {
     const response = await fetch(API_URL);
@@ -78,19 +95,23 @@ export function processStats(
   startDate?: string,
   endDate?: string
 ): DashboardStats {
-  let filteredData = selectedArea === 'Todas' ? data : data.filter(d => d.area === selectedArea);
+  // 1. First, filter by date for ALL calculations
+  let dateFilteredData = [...data];
   
   if (startDate) {
     const start = new Date(startDate);
-    filteredData = filteredData.filter(d => new Date(d.submittedAt) >= start);
+    dateFilteredData = dateFilteredData.filter(d => new Date(d.submittedAt) >= start);
   }
   
   if (endDate) {
     const end = new Date(endDate);
     // Set end of day for end date
     end.setHours(23, 59, 59, 999);
-    filteredData = filteredData.filter(d => new Date(d.submittedAt) <= end);
+    dateFilteredData = dateFilteredData.filter(d => new Date(d.submittedAt) <= end);
   }
+
+  // 2. Then filter by area for specific metrics
+  let filteredData = selectedArea === 'Todas' ? dateFilteredData : dateFilteredData.filter(d => d.area === selectedArea);
 
   const total = filteredData.length;
   const allAreas = Array.from(new Set(data.map(d => d.area)));
@@ -110,12 +131,10 @@ export function processStats(
     iaFrequencyBreakdown: [],
     habits: { exercise: 0, hobbies: 0 }, testimonials: [], personalityTraits: [],
     leadershipSentiment: [], 
-    priorityActions: [
-      { action: 'Maior investimento em treinos', count: 0 },
-      { action: 'cursos e desenvolvimento técnico.', count: 0 },
-      { action: 'Melhoria clara nos canais de comunicação interna (saber o que se passa na empresa).', count: 0 },
-      { action: 'Programas de reconhecimento e premiação mais transparentes.', count: 0 }
-    ], 
+    priorityActions: PRIORIDADES_POSSIVEIS.slice(0, 4).map(action => ({
+      action: action.replace(/\.$/, ''), // Remove o ponto final na interface
+      count: 0
+    })),
     infoSources: [],
     areas: allAreas,
     heatmap: [],
@@ -149,22 +168,23 @@ export function processStats(
   
   const legacyMotivation = (Math.ceil(filteredData.reduce((acc, curr) => acc + curr.legacy, 0) / total) / 5) * 100;
 
-  // Area Engagement (always calculated from full data for comparison)
+  // Area Engagement (calculated from date-filtered data)
   const areas = Array.from(new Set(data.map(d => d.area)));
   const areaEngagement = areas.map(area => {
-    const areaData = data.filter(d => d.area === area);
+    const areaData = dateFilteredData.filter(d => d.area === area);
+    if (areaData.length === 0) return { area, score: 0 };
     const avg = areaData.reduce((acc, curr) => acc + curr.enps, 0) / areaData.length;
     const score = (Math.ceil(avg) / 10) * 100; // Scale 0-10 to 0-100%
     return { area, score };
   }).sort((a, b) => b.score - a.score);
 
   const areaDistribution = areas.map(area => {
-    const areaData = data.filter(d => d.area === area);
-    return { area, percentage: (areaData.length / data.length) * 100 };
+    const areaData = dateFilteredData.filter(d => d.area === area);
+    return { area, percentage: dateFilteredData.length > 0 ? (areaData.length / dateFilteredData.length) * 100 : 0 };
   }).sort((a, b) => b.percentage - a.percentage);
 
   const iaUsageByArea = areas.map(area => {
-    const areaData = data.filter(d => d.area === area);
+    const areaData = dateFilteredData.filter(d => d.area === area);
     const highUsage = areaData.filter(d => d.iaFrequency && (d.iaFrequency.includes('Diariamente') || d.iaFrequency.includes('Algumas vezes'))).length;
     return { area, percentage: areaData.length > 0 ? (highUsage / areaData.length) * 100 : 0 };
   }).sort((a, b) => b.percentage - a.percentage);
@@ -191,15 +211,19 @@ export function processStats(
   // Recognition Preferences
   const recMap: Record<string, number> = {};
   filteredData.forEach(d => {
-    const types = d.recognitionTypes.split(',').map(t => t.trim());
-    types.forEach(t => {
-      if (t) recMap[t] = (recMap[t] || 0) + 1;
+    if (!d.recognitionTypes) return;
+    
+    RECONHECIMENTO_POSSIVEIS.forEach(rec => {
+      if (d.recognitionTypes.includes(rec)) {
+        recMap[rec] = (recMap[rec] || 0) + 1;
+      }
     });
   });
+  
   const recognitionPreferences = Object.entries(recMap)
     .map(([type, count]) => ({ type, percentage: (count / total) * 100 }))
     .sort((a, b) => b.percentage - a.percentage)
-    .slice(0, 2);
+    .slice(0, 5); // Agora pega o Top 5 em vez de apenas 2
 
   // IA Frequency Breakdown
   const iaMap: Record<string, number> = {};
@@ -245,11 +269,17 @@ export function processStats(
   // Priority Actions
   const actionMap: Record<string, number> = {};
   filteredData.forEach(d => {
-    const actions = d.priorityActions.split(',').map(a => a.trim());
-    actions.forEach(a => {
-      if (a) actionMap[a] = (actionMap[a] || 0) + 1;
+    if (!d.priorityActions) return;
+    
+    // Procura por cada frase exata dentro da resposta do usuário
+    PRIORIDADES_POSSIVEIS.forEach(prioridade => {
+      if (d.priorityActions.includes(prioridade)) {
+        const labelLimpa = prioridade.replace(/\.$/, ''); // Remove o ponto final
+        actionMap[labelLimpa] = (actionMap[labelLimpa] || 0) + 1;
+      }
     });
   });
+  
   const priorityActions = Object.entries(actionMap)
     .map(([action, count]) => ({ action, count }))
     .sort((a, b) => b.count - a.count)
@@ -276,9 +306,9 @@ export function processStats(
   const communicationFeedback = filteredData.map(d => ({ area: d.area, text: d.communicationChange }));
   const visionFeedback = filteredData.map(d => ({ area: d.area, text: d.vision40Years }));
 
-  // Heatmap Data
+  // Heatmap Data (using date-filtered data)
   const heatmap = allAreas.map(area => {
-    const areaData = data.filter(d => d.area === area);
+    const areaData = dateFilteredData.filter(d => d.area === area);
     const aTotal = areaData.length;
     if (aTotal === 0) return { area, metrics: [] };
 
@@ -311,16 +341,21 @@ export function processStats(
     };
   });
 
-  // Comparisons Data
+  // Comparisons Data (using date-filtered data)
   const comparisons = allAreas.map(area => {
-    const areaData = data.filter(d => d.area === area);
+    const areaData = dateFilteredData.filter(d => d.area === area);
     const aTotal = areaData.length;
     
     // Calculate top priority action for this area
     const areaActionMap: Record<string, number> = {};
     areaData.forEach(d => {
-      const actions = d.priorityActions.split(',').map(a => a.trim());
-      actions.forEach(a => { if (a) areaActionMap[a] = (areaActionMap[a] || 0) + 1; });
+      if (!d.priorityActions) return;
+      PRIORIDADES_POSSIVEIS.forEach(prioridade => {
+        if (d.priorityActions.includes(prioridade)) {
+           const labelLimpa = prioridade.replace(/\.$/, '');
+           areaActionMap[labelLimpa] = (areaActionMap[labelLimpa] || 0) + 1;
+        }
+      });
     });
     const topAction = Object.entries(areaActionMap)
       .sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';

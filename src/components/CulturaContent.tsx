@@ -86,8 +86,7 @@ export function CulturaContent({ stats }: CulturaContentProps) {
             <h3 className="text-variant-style">Segurança & Sincronia</h3>
             <ExportButton targetRef={psychologicalSafetyRef} fileName="seguranca-sincronia" />
           </div>
-          <div className="space-y-4 sm:space-y-8">
-            <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-on-surface/5 border border-outline-variant/10">
+          <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-on-surface/5 border border-outline-variant/10">
               <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
                 <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
                   <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
@@ -101,12 +100,13 @@ export function CulturaContent({ stats }: CulturaContentProps) {
                 <div className="flex-1 h-2 bg-on-surface/10 rounded-full overflow-hidden">
                   <motion.div 
                     initial={{ width: 0 }}
-                    animate={{ width: `${(stats.safetyScore / 5) * 100}%` }}
+                    animate={{ width: `${stats.safetyScore}%` }} // Usa a porcentagem direta
                     transition={{ duration: 1 }}
                     className="h-full bg-primary"
                   />
                 </div>
-                <span className="text-xs sm:text-sm font-bold">{stats.safetyScore.toFixed(1)}/5</span>
+                {/* Converte de volta para escala 0 a 5 */}
+                <span className="text-xs sm:text-sm font-bold">{((stats.safetyScore / 100) * 5).toFixed(1)}/5</span>
               </div>
             </div>
 
@@ -124,17 +124,17 @@ export function CulturaContent({ stats }: CulturaContentProps) {
                 <div className="flex-1 h-2 bg-on-surface/10 rounded-full overflow-hidden">
                   <motion.div 
                     initial={{ width: 0 }}
-                    animate={{ width: `${(stats.culturalSyncScore / 5) * 100}%` }}
+                    animate={{ width: `${stats.culturalSyncScore}%` }} // Usa a porcentagem direta
                     transition={{ duration: 1 }}
                     className="h-full bg-primary"
                   />
                 </div>
-                <span className="text-xs sm:text-sm font-bold">{stats.culturalSyncScore.toFixed(1)}/5</span>
+                {/* Converte de volta para escala 0 a 5 */}
+                <span className="text-xs sm:text-sm font-bold">{((stats.culturalSyncScore / 100) * 5).toFixed(1)}/5</span>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
         <div ref={personalityRef} className="lg:col-span-1 glass-card p-6 sm:p-8 rounded-3xl relative">

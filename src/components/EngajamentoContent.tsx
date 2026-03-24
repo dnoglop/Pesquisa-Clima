@@ -58,7 +58,7 @@ export function EngajamentoContent({ stats }: EngajamentoContentProps) {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
         {/* Coluna 1: IA */}
         <div ref={iaRef} className="glass-card p-6 sm:p-8 rounded-3xl relative">
           <div className="flex justify-between items-start mb-6">
@@ -102,34 +102,57 @@ export function EngajamentoContent({ stats }: EngajamentoContentProps) {
             <p className="text-4xl font-black text-[#E84F3D] mb-1">{`${stats.recognitionScore.toFixed(0)}%`}</p>
             <p className="text-[9px] font-bold text-secondary uppercase tracking-widest">Média de Valorização</p>
           </div>
-          <div className="space-y-3">
-            <p className="text-[9px] font-bold text-secondary uppercase tracking-widest">Preferências</p>
-            <div className="flex flex-wrap gap-2">
+          <div className="space-y-4">
+            <p className="text-[9px] font-bold text-secondary uppercase tracking-widest">Ranking de Preferências</p>
+            <div className="space-y-3">
               {stats.recognitionPreferences.map((pref, index) => (
-                <div key={index} className="px-3 py-1.5 rounded-xl bg-on-surface/5 text-[10px] font-bold border border-outline-variant/10">
-                  {pref.type}
+                <div key={index} className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-[10px] font-black">
+                    {index + 1}
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-[10px] font-bold text-on-surface leading-tight">{pref.type}</p>
+                    <div className="mt-1.5 h-1.5 bg-on-surface/5 rounded-full overflow-hidden w-full">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${pref.percentage}%` }}
+                        transition={{ duration: 1, delay: index * 0.1 }}
+                        className="h-full bg-primary"
+                      />
+                    </div>
+                  </div>
+                  <span className="text-[10px] font-black text-secondary shrink-0 w-8 text-right">
+                    {pref.percentage.toFixed(0)}%
+                  </span>
                 </div>
               ))}
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Ações Prioritárias - Full Width Style like Image */}
-      <div ref={actionsRef} className="py-12 relative">
-        <div className="flex justify-between items-center mb-12">
-          <h2 className="text-5xl font-black text-[#F27D26] tracking-tight">Prioridades</h2>
-          <ExportButton targetRef={actionsRef} fileName="prioridades" />
-        </div>
-        <div className="space-y-6">
-          {stats.priorityActions.slice(0, 4).map((action, index) => (
-            <div key={index} className="flex items-center gap-8 p-8 rounded-[32px] bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-outline-variant/5 group hover:shadow-[0_20px_50px_rgba(242,125,38,0.1)] transition-all duration-500">
-              <div className="w-14 h-14 rounded-full bg-[#F27D26] text-white flex items-center justify-center shrink-0 text-2xl font-black shadow-xl shadow-[#F27D26]/30">
-                {index + 1}
-              </div>
-              <p className="text-2xl font-bold text-[#312D31] leading-tight">{action.action}</p>
+      <div ref={actionsRef} className="glass-card p-6 sm:p-8 rounded-3xl relative">
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <h3 className="text-variant-style">Prioridades</h3>
+              <p className="text-[10px] text-secondary">Ações mais votadas</p>
             </div>
-          ))}
+            <ExportButton targetRef={actionsRef} fileName="prioridades" />
+          </div>
+          <div className="space-y-4 mt-2">
+            {stats.priorityActions.slice(0, 5).map((action, index) => (
+              <div key={index} className="flex items-center gap-3">
+                <div className="w-6 h-6 rounded-full bg-[#F27D26]/10 text-[#F27D26] flex items-center justify-center shrink-0 text-[10px] font-black">
+                  {index + 1}
+                </div>
+                <div className="flex-1">
+                  <p className="text-[10px] font-bold text-on-surface leading-tight">{action.action}</p>
+                </div>
+                <span className="text-[10px] font-black text-[#F27D26] shrink-0 text-right">
+                  {action.count} votos
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
