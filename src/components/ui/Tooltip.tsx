@@ -77,10 +77,10 @@ export function Tooltip({ content, children }: TooltipProps) {
   );
 }
 
-export function InfoTooltip({ content }: { content: string }) {
+export function InfoTooltip({ content, variant = 'dark' }: { content: string, variant?: 'light' | 'dark' }) {
   return (
     <Tooltip content={content}>
-      <Info className="w-3 h-3 text-secondary hover:text-primary transition-colors" />
+      <Info className={`w-3 h-3 transition-colors ${variant === 'light' ? 'text-white/60 hover:text-white' : 'text-secondary hover:text-primary'}`} />
     </Tooltip>
   );
 }

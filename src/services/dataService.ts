@@ -74,7 +74,15 @@ export function processStats(
     enpsScore: 0, 
     enpsDistribution: { promoters: 0, passives: 0, detractors: 0 },
     mentorshipInterest: 0, iaUsageHigh: 0, legacyMotivation: 0,
-    areaEngagement: [], recognitionPreferences: [], iaFrequencyBreakdown: [],
+    areaEngagement: [], areaDistribution: [], iaUsageByArea: [],
+    recognitionScore: 0,
+    identificationScore: 0,
+    leadershipScore: 0,
+    safetyScore: 0,
+    culturalSyncScore: 0,
+    elogioInterest: 0,
+    recognitionPreferences: [],
+    iaFrequencyBreakdown: [],
     habits: { exercise: 0, hobbies: 0 }, testimonials: [], personalityTraits: [],
     leadershipSentiment: [], priorityActions: [], infoSources: [],
     areas: allAreas,
@@ -86,12 +94,13 @@ export function processStats(
     totalResponses: 0
   };
 
-  const enpsScore = filteredData.reduce((acc, curr) => acc + curr.enps, 0) / total;
-  
-  // eNPS Distribution
   const promoters = filteredData.filter(d => d.enps >= 9).length;
   const passives = filteredData.filter(d => d.enps >= 7 && d.enps <= 8).length;
   const detractors = filteredData.filter(d => d.enps <= 6).length;
+  
+  const enpsScore = ((promoters - detractors) / total) * 100;
+  
+  // eNPS Distribution
   const enpsDistribution = {
     promoters: (promoters / total) * 100,
     passives: (passives / total) * 100,
@@ -111,6 +120,24 @@ export function processStats(
     const score = areaData.reduce((acc, curr) => acc + curr.enps, 0) / areaData.length;
     return { area, score };
   }).sort((a, b) => b.score - a.score);
+
+  const areaDistribution = areas.map(area => {
+    const areaData = data.filter(d => d.area === area);
+    return { area, percentage: (areaData.length / data.length) * 100 };
+  }).sort((a, b) => b.percentage - a.percentage);
+
+  const iaUsageByArea = areas.map(area => {
+    const areaData = data.filter(d => d.area === area);
+    const highUsage = areaData.filter(d => d.iaFrequency && (d.iaFrequency.includes('Diariamente') || d.iaFrequency.includes('Algumas vezes'))).length;
+    return { area, percentage: areaData.length > 0 ? (highUsage / areaData.length) * 100 : 0 };
+  }).sort((a, b) => b.percentage - a.percentage);
+
+  const recognitionScore = filteredData.reduce((acc, curr) => acc + curr.recognitionFeeling, 0) / total;
+  const identificationScore = filteredData.reduce((acc, curr) => acc + curr.pillarsIdentification, 0) / total;
+  const leadershipScore = filteredData.reduce((acc, curr) => acc + curr.managerExample, 0) / total;
+  const safetyScore = filteredData.reduce((acc, curr) => acc + curr.safeSpaceForErrors, 0) / total;
+  const culturalSyncScore = filteredData.reduce((acc, curr) => acc + curr.culturalSync, 0) / total;
+  const elogioInterest = (filteredData.filter(d => d.elogioCanal && d.elogioCanal.toLowerCase().includes('sim')).length / total) * 100;
 
   // Recognition Preferences
   const recMap: Record<string, number> = {};
@@ -138,7 +165,7 @@ export function processStats(
   const hobbiesCount = filteredData.filter(d => d.hobbies && d.hobbies.split(',').length >= 2).length;
 
   // Testimonials
-  const testimonials = filteredData.slice(0, 3).map(d => ({
+  const testimonials = filteredData.slice(0, 6).map(d => ({
     text: d.testimonial,
     role: d.area
   }));
@@ -244,6 +271,14 @@ export function processStats(
     iaUsageHigh,
     legacyMotivation,
     areaEngagement,
+    areaDistribution,
+    iaUsageByArea,
+    recognitionScore,
+    identificationScore,
+    leadershipScore,
+    safetyScore,
+    culturalSyncScore,
+    elogioInterest,
     recognitionPreferences,
     iaFrequencyBreakdown,
     habits: {

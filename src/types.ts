@@ -52,6 +52,14 @@ export interface DashboardStats {
   iaUsageHigh: number;
   legacyMotivation: number;
   areaEngagement: { area: string; score: number }[];
+  areaDistribution: { area: string; percentage: number }[];
+  iaUsageByArea: { area: string; percentage: number }[];
+  recognitionScore: number;
+  identificationScore: number;
+  leadershipScore: number;
+  safetyScore: number;
+  culturalSyncScore: number;
+  elogioInterest: number;
   recognitionPreferences: { type: string; percentage: number }[];
   iaFrequencyBreakdown: { label: string; percentage: number }[];
   habits: {
