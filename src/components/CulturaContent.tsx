@@ -24,13 +24,13 @@ export function CulturaContent({ stats }: CulturaContentProps) {
     : 0;
 
   return (
-    <div className="p-4 mt-10 space-y-4 max-full mx-auto sm:space-y-8 max-w-7xl mx-auto">
+    <div className="p-4 mt-5 space-y-4 max-full mx-[30px] sm:space-y-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
         <div ref={leadershipRef} className="glass-card p-6 sm:p-8 rounded-3xl relative">
           <div className="flex justify-between items-start mb-6 sm:mb-8">
             <div>
-              <h3 className="text-variant-style">Percepção da Liderança</h3>
-              <p className="text-xs sm:text-sm text-secondary">Como os colaboradores veem a atuação das lideranças</p>
+              <h3 className="text-variant-style">Percepção da liderança</h3>
+              <p className="text-xs text-secondary">Como os Consisters veem a atuação das lideranças</p>
             </div>
             <ExportButton targetRef={leadershipRef} fileName="percepcao-lideranca" />
           </div>
@@ -81,9 +81,12 @@ export function CulturaContent({ stats }: CulturaContentProps) {
           </div>
         </div>
 
-        <div ref={psychologicalSafetyRef} className="glass-card p-6 sm:p-8 rounded-3xl relative">
+        <div ref={psychologicalSafetyRef} className="glass-card p-6 sm:p-8 rounded-3xl relative flex flex-col gap-4">
           <div className="flex justify-between items-start mb-6 sm:mb-8">
-            <h3 className="text-variant-style">Segurança & Sincronia</h3>
+            <div>
+              <h3 className="text-variant-style">Ambiente seguro</h3>
+              <p className="text-xs text-secondary">Como os Consisters se sentem no time e com a cultura</p>
+            </div>
             <ExportButton targetRef={psychologicalSafetyRef} fileName="seguranca-sincronia" />
           </div>
           <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-on-surface/5 border border-outline-variant/10">
@@ -92,8 +95,8 @@ export function CulturaContent({ stats }: CulturaContentProps) {
                   <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-xs sm:text-sm font-bold">Espaço Seguro para Erros</p>
-                  <p className="text-[9px] sm:text-[10px] text-secondary">Cultura de aprendizado vs punição</p>
+                  <p className="text-xs sm:text-sm font-bold">Espaço seguro para erros</p>
+                  <p className="text-[9px] sm:text-[10px] text-secondary">Cultura de aprendizado vs exposição</p>
                 </div>
               </div>
               <div className="flex items-center gap-3 sm:gap-4">
@@ -116,8 +119,8 @@ export function CulturaContent({ stats }: CulturaContentProps) {
                   <Megaphone className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-xs sm:text-sm font-bold">Sincronia Cultural</p>
-                  <p className="text-[9px] sm:text-[10px] text-secondary">Alinhamento entre discurso e prática</p>
+                  <p className="text-xs sm:text-sm font-bold">Alinhamento Cultural</p>
+                  <p className="text-[9px] sm:text-[10px] text-secondary">Alinhamento entre o discurso e a prática</p>
                 </div>
               </div>
               <div className="flex items-center gap-3 sm:gap-4">
@@ -139,7 +142,7 @@ export function CulturaContent({ stats }: CulturaContentProps) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
         <div ref={personalityRef} className="lg:col-span-1 glass-card p-6 sm:p-8 rounded-3xl relative">
           <div className="flex justify-between items-start mb-6">
-            <h3 className="text-variant-style">Personalidade</h3>
+            <h3 className="text-variant-style">Personalidade Consistem</h3>
             <ExportButton targetRef={personalityRef} fileName="personalidade-empresa" />
           </div>
           <div className="flex flex-wrap gap-2">
@@ -158,17 +161,17 @@ export function CulturaContent({ stats }: CulturaContentProps) {
           <div className="mt-8 p-4 rounded-2xl bg-primary/5 border border-primary/10">
             <div className="flex items-center gap-3 mb-2">
               <MessageSquare className="w-4 h-4 text-primary" />
-              <p className="text-[10px] font-bold uppercase tracking-widest text-primary">Canal de Elogio</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-primary">Canal de elogio</p>
             </div>
             <p className="text-xs leading-relaxed">
-              <span className="font-black text-primary">{stats.elogioInterest.toFixed(0)}%</span> dos colaboradores gostariam de um canal oficial para elogios públicos.
+              <span className="font-black text-primary">{stats.elogioInterest.toFixed(0)}%</span> dos Consisters tem interesse em um canal oficial para elogios públicos.
             </p>
           </div>
         </div>
 
         <div ref={valuePerceptionRef} className="lg:col-span-2 glass-card p-6 sm:p-8 rounded-3xl relative">
           <div className="flex justify-between items-start mb-6">
-            <h3 className="text-variant-style">Percepção de Valor (Propósito)</h3>
+            <h3 className="text-variant-style">Percepção de valor</h3>
             <ExportButton targetRef={valuePerceptionRef} fileName="percepcao-valor" />
           </div>
           <div className="space-y-4">
@@ -178,7 +181,7 @@ export function CulturaContent({ stats }: CulturaContentProps) {
                   {index + 1}
                 </div>
                 <div className="flex-1">
-                  <p className="text-xs sm:text-sm font-bold leading-tight">"{item.phrase}"</p>
+                  <p className="text-xs italic sm:text-sm leading-tight">"{item.phrase}"</p>
                   <div className="mt-2 h-1.5 bg-on-surface/10 rounded-full overflow-hidden w-full">
                     <motion.div 
                       initial={{ width: 0 }}

@@ -44,7 +44,7 @@ export interface AreaComparison {
   lideranca: number;
   identificacao: number;
   reconhecimento: number;
-  topPriorityAction: string;
+  topPriorityActions: { action: string; count: number }[];
   iaUsage: number;
   mentorshipInterest: number;
 }

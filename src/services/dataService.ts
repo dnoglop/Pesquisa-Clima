@@ -91,7 +91,6 @@ export async function fetchSurveyData(): Promise<SurveyResponse[]> {
 
 export function processStats(
   data: SurveyResponse[], 
-  selectedArea: string = 'Todas',
   startDate?: string,
   endDate?: string
 ): DashboardStats {
@@ -110,8 +109,8 @@ export function processStats(
     dateFilteredData = dateFilteredData.filter(d => new Date(d.submittedAt) <= end);
   }
 
-  // 2. Then filter by area for specific metrics
-  let filteredData = selectedArea === 'Todas' ? dateFilteredData : dateFilteredData.filter(d => d.area === selectedArea);
+  // 2. Use the date-filtered data for all metrics
+  let filteredData = dateFilteredData;
 
   const total = filteredData.length;
   const allAreas = Array.from(new Set(data.map(d => d.area)));
@@ -357,8 +356,10 @@ export function processStats(
         }
       });
     });
-    const topAction = Object.entries(areaActionMap)
-      .sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
+    const topActions = Object.entries(areaActionMap)
+      .map(([action, count]) => ({ action, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 3);
 
     const getAreaPercentage = (field: keyof SurveyResponse, maxScale: number = 5) => {
       if (aTotal === 0) return 0;
@@ -388,7 +389,7 @@ export function processStats(
       lideranca: getAreaPercentage('managerExample', 5),
       identificacao: getAreaPercentage('pillarsIdentification', 5),
       reconhecimento: getAreaPercentage('recognitionFeeling', 5),
-      topPriorityAction: topAction,
+      topPriorityActions: topActions,
       iaUsage: aTotal > 0 ? (areaData.filter(d => d.iaFrequency && (d.iaFrequency.toLowerCase().includes('diariamente') || d.iaFrequency.toLowerCase().includes('semana'))).length / aTotal) * 100 : 0,
       mentorshipInterest: aTotal > 0 ? (areaData.filter(d => d.mentorship && d.mentorship.toLowerCase().includes('sim')).length / aTotal) * 100 : 0,
     };

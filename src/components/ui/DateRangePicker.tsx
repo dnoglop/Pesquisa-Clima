@@ -139,7 +139,7 @@ export function DateRangePicker({ startDate, endDate, onRangeChange }: DateRange
     if (start && isValid(start)) {
       return `${format(start, 'dd/MM/yy')} - ...`;
     }
-    return 'Selecionar Período';
+    return 'Escolher datas';
   };
 
   return (

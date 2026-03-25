@@ -26,11 +26,11 @@ export function FeedbackContent({ stats }: { stats: DashboardStats }) {
   }, [stats.testimonials, searchTerm]);
 
   return (
-    <div className="p-4 mt-10 space-y-4 max-full max-w-7xl mx-auto">
+    <div className="p-4 mt-5 space-y-4 max-full mx-[30px]">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-8">
         <div>
-          <h2 className="text-secondary-style tracking-tight">Voz do Time</h2>
-          <p className="text-secondary text-[10px] sm:text-sm mt-1">Insights qualitativos e percepções diretas dos colaboradores</p>
+          <h2 className="text-variant-style">A voz dos Consisters</h2>
+          <p className="text-secondary text-[10px] sm:text-sm mt-1">Feedbacks qualitativos e as percepções</p>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
@@ -52,7 +52,7 @@ export function FeedbackContent({ stats }: { stats: DashboardStats }) {
         <div className="lg:col-span-12 space-y-6">
           <div className="flex items-center gap-4">
             <Quote className="w-5 h-5 text-primary" />
-            <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-secondary">"Como é trabalhar aí?" (10 Segundos)</h3>
+            <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-secondary">"Como é trabalhar na Consistem?"</h3>
             <div className="h-px flex-1 bg-outline-variant/20" />
           </div>
           
@@ -76,7 +76,6 @@ export function FeedbackContent({ stats }: { stats: DashboardStats }) {
                     </p>
                     <div className="pt-4 border-t border-outline-variant/10 flex justify-between items-center">
                       <span className="text-[9px] font-black uppercase tracking-widest text-primary">{item.role}</span>
-                      <span className="text-[8px] font-bold text-secondary">DEPOIMENTO REAL</span>
                     </div>
                   </motion.div>
                 ))
@@ -93,7 +92,7 @@ export function FeedbackContent({ stats }: { stats: DashboardStats }) {
         <div className="lg:col-span-6 space-y-6">
           <div className="flex items-center gap-4">
             <Megaphone className="w-5 h-5 text-tertiary" />
-            <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-secondary">Sugestões de Comunicação</h3>
+            <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-secondary">Sugestões de comunicação</h3>
             <div className="h-px flex-1 bg-outline-variant/20" />
           </div>
           

@@ -13,10 +13,10 @@ export function HeatmapContent({ stats }: HeatmapContentProps) {
   const metrics = ['Identificação', 'Liderança', 'Segurança', 'Reconhecimento', 'eNPS'];
 
   return (
-    <div className="p-4 sm:p-8 mt-16 space-y-8 max-w-7xl mx-auto">
+    <div className="p-4 mt-5 space-y-8 max-full mx-[30px]">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
         <div>
-          <h2 className="text-secondary-style tracking-tight">Mapa de Calor da Cultura</h2>
+          <h2 className="text-variant-style">Mapa de calor da cultura Consistem</h2>
           <p className="text-secondary text-xs sm:text-sm mt-2">Visão transversal dos pilares por área de atuação</p>
         </div>
         <ExportButton targetRef={containerRef} fileName="mapa-calor-cultura" />
@@ -65,7 +65,7 @@ export function HeatmapContent({ stats }: HeatmapContentProps) {
         </div>
 
         <div className="mt-8 sm:mt-12 flex flex-wrap items-center justify-center gap-4 sm:gap-8 border-t border-outline-variant/10 pt-6 sm:pt-8">
-          <LegendItem color="#049C7A" label="Excelente (75%+)" />
+          <LegendItem color="#049C7A" label="Excelente (> 75%)" />
           <LegendItem color="#F27D26" label="Atenção (50% - 74%)" />
           <LegendItem color="#E84F3D" label="Crítico (< 50%)" />
         </div>

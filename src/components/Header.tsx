@@ -48,7 +48,7 @@ export function Header({
         <div className="flex items-center shrink-0">
           <div className="w-32 h-12 flex items-center justify-center">
             <img 
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQeXyRP1EBwBnu6AeqXq9N5I0sfG_Go0DkOaQ&s" 
+              src="https://i.ibb.co/N6QwcPmD/images-removebg-preview.png" 
               alt="Consistem Logo" 
               className="w-full h-full object-contain"
               referrerPolicy="no-referrer"
@@ -96,7 +96,7 @@ export function Header({
                 ? "bg-surface-low text-secondary cursor-not-allowed" 
                 : "bg-primary text-white shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 active:translate-y-0"
             )}
-            title="Atualizar Dados"
+            title="Atualizar os dados"
           >
             <RefreshCw className={cn("w-5 h-5", isRefreshing && "animate-spin", !isRefreshing && "group-hover:rotate-180 transition-transform duration-500")} />
           </button>

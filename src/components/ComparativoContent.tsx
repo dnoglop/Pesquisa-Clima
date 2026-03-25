@@ -52,19 +52,19 @@ export function ComparativoContent({ stats }: ComparativoContentProps) {
 
   const metricsList = [
     { key: 'enps', label: 'eNPS', isPercentage: true, max: 100 },
-    { key: 'seguranca', label: 'Segurança Psicológica', isPercentage: true, max: 100 },
-    { key: 'lideranca', label: 'Exemplo da Liderança', isPercentage: true, max: 100 },
-    { key: 'identificacao', label: 'Identificação Cultural', isPercentage: true, max: 100 },
-    { key: 'reconhecimento', label: 'Sentimento de Reconhecimento', isPercentage: true, max: 100 },
+    { key: 'seguranca', label: 'Segurança psicológica', isPercentage: true, max: 100 },
+    { key: 'lideranca', label: 'Exemplo da liderança', isPercentage: true, max: 100 },
+    { key: 'identificacao', label: 'Identificação cultural', isPercentage: true, max: 100 },
+    { key: 'reconhecimento', label: 'Sentimento de reconhecimento', isPercentage: true, max: 100 },
     { key: 'iaUsage', label: 'Adoção de IA', isPercentage: true, max: 100 },
-    { key: 'mentorshipInterest', label: 'Interesse em Mentoria', isPercentage: true, max: 100 },
+    { key: 'mentorshipInterest', label: 'Interesse na mentoria', isPercentage: true, max: 100 },
   ];
 
   return (
-    <div className="p-4 mt-10 space-y-4 max-full mx-auto sm:space-y-8 max-w-7xl mx-auto">
+    <div className="p-4 mt-5 space-y-4 max-full mx-[30px] sm:space-y-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 sm:mb-8 gap-4">
         <div>
-          <h2 className="text-secondary-style tracking-tight">Comparativo Estratégico</h2>
+          <h2 className="text-variant-style">Comparativo estratégico</h2>
           <p className="text-secondary text-[10px] sm:text-sm mt-1 sm:mt-2">Selecione até 3 áreas para cruzar dados e identificar benchmarks internos</p>
         </div>
         <ExportButton targetRef={containerRef} fileName="comparativo-estrategico" />
@@ -93,8 +93,8 @@ export function ComparativoContent({ stats }: ComparativoContentProps) {
           <div className="lg:col-span-5 glass-card p-6 sm:p-8 rounded-3xl h-[450px] sm:h-[550px] flex flex-col">
             <div className="flex justify-between items-start mb-6">
               <div>
-                <h3 className="text-variant-style">Equilíbrio Cultural</h3>
-                <p className="text-[10px] text-secondary">Escala de Engajamento (0-100%)</p>
+                <h3 className="text-variant-style">Equilíbrio cultural</h3>
+                <p className="text-[10px] text-secondary">Escala de engajamento (0-100%)</p>
               </div>
             </div>
             <div className="flex-1 min-h-0">
@@ -136,7 +136,7 @@ export function ComparativoContent({ stats }: ComparativoContentProps) {
 
           {/* New Comparison Matrix */}
           <div className="lg:col-span-7 glass-card p-6 sm:p-8 rounded-3xl overflow-hidden">
-            <h3 className="text-variant-style mb-6">Matriz de Benchmarking</h3>
+            <h3 className="text-variant-style mb-6">Matriz de comparação</h3>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
@@ -150,7 +150,7 @@ export function ComparativoContent({ stats }: ComparativoContentProps) {
                         </div>
                       </th>
                     ))}
-                    <th className="text-right py-4 text-[9px] font-black text-tertiary uppercase tracking-widest">Gap Max</th>
+                    <th className="text-right py-4 text-[9px] font-black text-tertiary uppercase tracking-widest">Delta</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-outline-variant/5">
@@ -203,7 +203,7 @@ export function ComparativoContent({ stats }: ComparativoContentProps) {
               <div>
                 <p className="text-[10px] font-bold text-on-surface uppercase tracking-widest mb-1">Dica de Análise</p>
                 <p className="text-[10px] text-secondary leading-relaxed">
-                  Valores em <span className="text-tertiary font-bold">verde</span> representam o benchmark (melhor desempenho) entre as áreas selecionadas. Gaps superiores a 20% da escala indicam oportunidades críticas de compartilhamento de boas práticas.
+                  Valores em <span className="text-tertiary font-bold">verde</span> representam (melhor desempenho) entre as áreas selecionadas. Deltas superiores a 20% da escala indicam oportunidades críticas de compartilhamento de boas práticas.
                 </p>
               </div>
             </div>
@@ -214,7 +214,7 @@ export function ComparativoContent({ stats }: ComparativoContentProps) {
         <div className="space-y-6">
           <div className="flex items-center gap-4">
             <div className="h-px flex-1 bg-outline-variant/20" />
-            <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-secondary">Análise Detalhada por Área</h3>
+            <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-secondary">Análise detalhada por área</h3>
             <div className="h-px flex-1 bg-outline-variant/20" />
           </div>
 
@@ -232,12 +232,12 @@ export function ComparativoContent({ stats }: ComparativoContentProps) {
                   className="glass-card p-6 rounded-3xl border-t-4"
                   style={{ borderTopColor: colors[idx] }}
                 >
-                  <div className="flex justify-between items-start mb-6">
-                    <div>
-                      <h4 className="text-sm font-black uppercase tracking-wider text-on-surface">{area}</h4>
-                      <p className="text-[10px] text-secondary">Perfil de Engajamento</p>
+                  <div className="flex justify-between items-start gap-3 mb-6">
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-sm font-black uppercase tracking-wider text-on-surface truncate" title={area}>{area}</h4>
+                      <p className="text-[10px] text-secondary">Perfil de engajamento</p>
                     </div>
-                    <div className="px-2 py-1 rounded bg-on-surface/5 text-[9px] font-bold text-primary">
+                    <div className="px-2.5 py-1.5 rounded-xl bg-primary/10 text-primary text-[10px] font-black whitespace-nowrap shrink-0 border border-primary/20">
                       {areaStats.enps.toFixed(0)}% NPS
                     </div>
                   </div>
@@ -247,13 +247,23 @@ export function ComparativoContent({ stats }: ComparativoContentProps) {
                     <div className="space-y-2">
                       <p className="text-[9px] font-bold text-secondary uppercase tracking-widest">Distribuição eNPS</p>
                       <div className="flex h-2 rounded-full overflow-hidden bg-on-surface/5">
-                        <div className="bg-tertiary" style={{ width: `${areaStats.enpsDistribution.promoters}%` }} />
-                        <div className="bg-background" style={{ width: `${areaStats.enpsDistribution.passives}%` }} />
-                        <div className="bg-primary" style={{ width: `${areaStats.enpsDistribution.detractors}%` }} />
+                        <div className="bg-tertiary" style={{ width: `${areaStats.enpsDistribution.promoters}%` }} title="Promotores" />
+                        <div className="bg-[#F27D26]" style={{ width: `${areaStats.enpsDistribution.passives}%` }} title="Passivos" />
+                        <div className="bg-primary" style={{ width: `${areaStats.enpsDistribution.detractors}%` }} title="Detratores" />
                       </div>
-                      <div className="flex justify-between text-[8px] font-bold text-secondary">
-                        <span>P: {areaStats.enpsDistribution.promoters.toFixed(0)}%</span>
-                        <span>D: {areaStats.enpsDistribution.detractors.toFixed(0)}%</span>
+                      <div className="flex justify-between text-[7px] font-bold text-secondary uppercase tracking-tighter">
+                        <span className="flex items-center gap-1">
+                          <div className="w-1.5 h-1.5 rounded-full bg-tertiary" />
+                          Prom: {areaStats.enpsDistribution.promoters.toFixed(0)}%
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#F27D26]" />
+                          Pass: {areaStats.enpsDistribution.passives.toFixed(0)}%
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                          Det: {areaStats.enpsDistribution.detractors.toFixed(0)}%
+                        </span>
                       </div>
                     </div>
 
@@ -269,8 +279,21 @@ export function ComparativoContent({ stats }: ComparativoContentProps) {
                     </div>
 
                     <div className="pt-4 border-t border-outline-variant/10">
-                      <p className="text-[8px] font-bold text-secondary uppercase mb-1">Prioridade da Área</p>
-                      <p className="text-[10px] font-bold text-on-surface leading-tight">{areaStats.topPriorityAction}</p>
+                      <p className="text-[8px] font-bold text-secondary uppercase mb-2">Prioridades mais votadas</p>
+                      <div className="space-y-2">
+                        {areaStats.topPriorityActions.length > 0 ? (
+                          areaStats.topPriorityActions.map((action, i) => (
+                            <div key={i} className="flex items-start gap-2">
+                              <div className="w-4 h-4 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-[8px] font-black">
+                                {i + 1}
+                              </div>
+                              <p className="text-[10px] font-bold text-on-surface leading-tight">{action.action}</p>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-[10px] text-secondary italic">Nenhuma prioridade registrada</p>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </motion.div>
@@ -282,46 +305,64 @@ export function ComparativoContent({ stats }: ComparativoContentProps) {
         {/* Cross Insights Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
           <div className="glass-card p-6 sm:p-8 rounded-3xl">
-            <h3 className="text-variant-style mb-6">IA vs Engajamento</h3>
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="text-variant-style">IA vs Engajamento</h3>
+              <InfoTooltip content="Calcula o eNPS médio agrupando os colaboradores pela frequência de uso de ferramentas de IA. Ajuda a entender se a adoção tecnológica influencia a satisfação." />
+            </div>
             <p className="text-[10px] text-secondary mb-6">Como a frequência de uso de IA impacta o eNPS</p>
             <div className="space-y-4">
               {stats.crossInsights.iaUsageVsEnps.map((item, idx) => (
-                <div key={item.label} className="flex items-center gap-4">
-                  <div className="w-24 text-[9px] font-bold text-secondary uppercase truncate" title={item.label}>{item.label}</div>
-                  <div className="flex-1 h-2 bg-on-surface/5 rounded-full overflow-hidden">
-                    <motion.div 
-                      initial={{ width: 0 }}
-                      animate={{ width: `${item.enps}%` }}
-                      className={cn(
-                        "h-full",
-                        item.enps >= 75 ? "bg-tertiary" : item.enps >= 50 ? "bg-primary" : "bg-destructive"
-                      )}
-                    />
+                <div key={item.label} className="group">
+                  <div className="flex justify-between items-end mb-1">
+                    <div className="text-[9px] font-bold text-secondary uppercase tracking-wider truncate max-w-[200px]" title={item.label}>
+                      {item.label}
+                    </div>
+                    <div className="text-[10px] font-black text-on-surface">{item.enps.toFixed(0)}% eNPS</div>
                   </div>
-                  <div className="w-12 text-right text-[10px] font-black">{item.enps.toFixed(0)}%</div>
+                  <div className="flex items-center gap-4">
+                    <div className="flex-1 h-2 bg-on-surface/5 rounded-full overflow-hidden">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${item.enps}%` }}
+                        className={cn(
+                          "h-full transition-colors",
+                          item.enps > 70 ? "bg-tertiary" : item.enps >= 40 ? "bg-[#F27D26]" : "bg-primary"
+                        )}
+                      />
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
 
           <div className="glass-card p-6 sm:p-8 rounded-3xl">
-            <h3 className="text-variant-style mb-6">Bem-estar vs Engajamento</h3>
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="text-variant-style">Bem-estar vs Engajamento</h3>
+              <InfoTooltip content="Calcula o eNPS médio agrupando os colaboradores pela frequência de exercícios físicos. Demonstra a correlação entre saúde e engajamento." />
+            </div>
             <p className="text-[10px] text-secondary mb-6">Impacto da prática de exercícios no eNPS</p>
             <div className="space-y-4">
               {stats.crossInsights.exerciseVsEnps.map((item, idx) => (
-                <div key={item.label} className="flex items-center gap-4">
-                  <div className="w-24 text-[9px] font-bold text-secondary uppercase truncate" title={item.label}>{item.label}</div>
-                  <div className="flex-1 h-2 bg-on-surface/5 rounded-full overflow-hidden">
-                    <motion.div 
-                      initial={{ width: 0 }}
-                      animate={{ width: `${item.enps}%` }}
-                      className={cn(
-                        "h-full",
-                        item.enps >= 75 ? "bg-tertiary" : item.enps >= 50 ? "bg-primary" : "bg-destructive"
-                      )}
-                    />
+                <div key={item.label} className="group">
+                  <div className="flex justify-between items-end mb-1">
+                    <div className="text-[9px] font-bold text-secondary uppercase tracking-wider truncate max-w-[200px]" title={item.label}>
+                      {item.label}
+                    </div>
+                    <div className="text-[10px] font-black text-on-surface">{item.enps.toFixed(0)}% eNPS</div>
                   </div>
-                  <div className="w-12 text-right text-[10px] font-black">{item.enps.toFixed(0)}%</div>
+                  <div className="flex items-center gap-4">
+                    <div className="flex-1 h-2 bg-on-surface/5 rounded-full overflow-hidden">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${item.enps}%` }}
+                        className={cn(
+                          "h-full transition-colors",
+                          item.enps > 70 ? "bg-tertiary" : item.enps >= 40 ? "bg-[#F27D26]" : "bg-primary"
+                        )}
+                      />
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>

@@ -15,7 +15,7 @@ const ENGAJAMENTO_DESCRIPTIONS = {
   enps: "Employee Net Promoter Score. Mede a lealdade dos colaboradores. Calculado como % de Promotores (9-10) menos % de Detratores (0-6).",
   bemEstar: "Percentual de colaboradores que praticam exercícios físicos regularmente, um indicador chave de saúde e equilíbrio.",
   mentoria: "Interesse em participar de programas de mentoria (ensinar ou aprender). Reflete a cultura de compartilhamento de conhecimento.",
-  ia: "Percentual de colaboradores que utilizam IA (Gemini, ChatGPT) diariamente ou algumas vezes por semana em suas tarefas."
+  ia: "Percentual de colaboradores que utilizam IA (Gemini, ChatGPT e etc) diariamente ou algumas vezes por semana em suas tarefas."
 };
 
 export function EngajamentoContent({ stats }: EngajamentoContentProps) {
@@ -26,34 +26,34 @@ export function EngajamentoContent({ stats }: EngajamentoContentProps) {
   const iaRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div className="p-4 mt-10 space-y-4 max-full mx-auto max-w-7xl mx-auto">
+    <div className="p-4 mt-5 space-y-4 max-full mx-[30px]">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <StatCard 
           icon={<TrendingUp className="w-5 h-5 text-primary" />}
           label="eNPS Geral"
-          value={stats.enpsScore.toFixed(1)}
-          subValue="Média de recomendação"
+          value={stats.enpsScore.toFixed(0)}
+          subValue="Média de recomendação pelos Consisters"
           tooltip={ENGAJAMENTO_DESCRIPTIONS.enps}
         />
         <StatCard 
           icon={<Heart className="w-5 h-5 text-primary" />}
           label="Bem-estar"
           value={`${stats.habits.exercise.toFixed(0)}%`}
-          subValue="Praticam exercícios"
+          subValue="dos Consisters praticam exercícios"
           tooltip={ENGAJAMENTO_DESCRIPTIONS.bemEstar}
         />
         <StatCard 
           icon={<GraduationCap className="w-5 h-5 text-primary" />}
           label="Mentoria"
           value={`${stats.mentorshipInterest.toFixed(0)}%`}
-          subValue="Interesse em participar"
+          subValue="dos Consisters tem interesse em participar"
           tooltip={ENGAJAMENTO_DESCRIPTIONS.mentoria}
         />
         <StatCard 
           icon={<History className="w-5 h-5 text-primary" />}
           label="Legado"
           value={`${stats.legacyMotivation.toFixed(0)}%`}
-          subValue="Motivação em partilhar"
+          subValue="dos Consisters concordam em partilhar"
           tooltip="Média de motivação para documentar e partilhar conhecimentos (0-5)."
         />
       </div>
@@ -63,8 +63,8 @@ export function EngajamentoContent({ stats }: EngajamentoContentProps) {
         <div ref={iaRef} className="glass-card p-6 sm:p-8 rounded-3xl relative">
           <div className="flex justify-between items-start mb-6">
             <div>
-              <h3 className="text-variant-style">Engajamento IA</h3>
-              <p className="text-[10px] text-secondary">Uso frequente por área</p>
+              <h3 className="text-variant-style">Engajamento em IA</h3>
+              <p className="text-xs text-secondary">Uso frequente por área</p>
             </div>
             <Brain className="w-5 h-5 text-primary/20" />
           </div>
@@ -88,7 +88,7 @@ export function EngajamentoContent({ stats }: EngajamentoContentProps) {
           </div>
           <div className="mt-8 pt-6 border-t border-outline-variant/10 text-center">
             <span className="text-4xl font-black text-on-surface">{stats.iaUsageHigh.toFixed(0)}%</span>
-            <p className="text-[9px] font-bold text-secondary uppercase tracking-widest mt-1">Adoção Geral de IA</p>
+            <p className="text-[9px] font-bold text-secondary uppercase tracking-widest mt-1">Adoção geral de IA na empresa</p>
           </div>
         </div>
 
@@ -100,10 +100,10 @@ export function EngajamentoContent({ stats }: EngajamentoContentProps) {
           </div>
           <div className="bg-on-surface/5 rounded-2xl p-6 mb-6 text-center">
             <p className="text-4xl font-black text-[#E84F3D] mb-1">{`${stats.recognitionScore.toFixed(0)}%`}</p>
-            <p className="text-[9px] font-bold text-secondary uppercase tracking-widest">Média de Valorização</p>
+            <p className="text-[9px] font-bold text-secondary uppercase tracking-widest">Média de valorização</p>
           </div>
           <div className="space-y-4">
-            <p className="text-[9px] font-bold text-secondary uppercase tracking-widest">Ranking de Preferências</p>
+            <p className="text-[9px] font-bold text-secondary uppercase tracking-widest">Ranking das preferências</p>
             <div className="space-y-3">
               {stats.recognitionPreferences.map((pref, index) => (
                 <div key={index} className="flex items-center gap-3">
@@ -160,8 +160,8 @@ export function EngajamentoContent({ stats }: EngajamentoContentProps) {
       <div ref={areaEngagementRef} className="glass-card p-6 sm:p-8 rounded-3xl relative">
         <div className="flex justify-between items-start mb-8">
           <div>
-            <h3 className="text-variant-style">Engajamento por Área (eNPS)</h3>
-            <p className="text-xs text-secondary">Comparativo de lealdade entre os grupos</p>
+            <h3 className="text-variant-style">Engajamento por área (eNPS)</h3>
+            <p className="text-xs text-secondary">Nota média de indicação separados por área</p>
           </div>
           <ExportButton targetRef={areaEngagementRef} fileName="engajamento-por-area" />
         </div>
@@ -175,7 +175,7 @@ export function EngajamentoContent({ stats }: EngajamentoContentProps) {
               <div className="h-1.5 bg-on-surface/5 rounded-full overflow-hidden">
                 <motion.div 
                   initial={{ width: 0 }}
-                  animate={{ width: `${(area.score / 10) * 100}%` }}
+                  animate={{ width: `${area.score}%` }}
                   transition={{ duration: 1, delay: index * 0.05 }}
                   className="h-full bg-primary"
                 />

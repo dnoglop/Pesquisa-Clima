@@ -12,10 +12,10 @@ interface VisaoGeralContentProps {
 }
 
 const METRIC_DESCRIPTIONS = {
-  identificacao: "Mede o alinhamento com os 5 pilares da Consistem. Média arredondada para cima e convertida para porcentagem (0-100%).",
-  lideranca: "Avalia se as lideranças são vistas como embaixadoras da marca. Média arredondada para cima e convertida para porcentagem (0-100%).",
-  seguranca: "O 'espaço seguro' para admitir erros sem julgamento. Média arredondada para cima e convertida para porcentagem (0-100%).",
-  reconhecimento: "Sentimento de valorização do esforço diário. Média arredondada para cima e convertida para porcentagem (0-100%).",
+  identificacao: "Mede o alinhamento com os 5 pilares da Consistem.",
+  lideranca: "Avalia se as lideranças são vistas como embaixadoras da marca.",
+  seguranca: "O 'espaço seguro' no time para admitir erros sem julgamento.",
+  reconhecimento: "Sentimento de valorização das suas entregas.",
 };
 
 export function VisaoGeralContent({ stats }: VisaoGeralContentProps) {
@@ -31,61 +31,64 @@ export function VisaoGeralContent({ stats }: VisaoGeralContentProps) {
 
   const enpsDistributionData = [
     { name: 'Promotores', value: stats.enpsDistribution.promoters, fill: '#049C7A' },
-    { name: 'Passivos', value: stats.enpsDistribution.passives, fill: '#312D31' },
+    { name: 'Passivos', value: stats.enpsDistribution.passives, fill: '#F27D26' },
     { name: 'Detratores', value: stats.enpsDistribution.detractors, fill: '#E84F3D' }
   ];
 
   const enpsData = [
     { name: 'Score', value: Math.max(0, stats.enpsScore), fill: '#E84F3D' },
-    { name: 'Rest', value: 100 - Math.max(0, stats.enpsScore), fill: '#312D31' }
+    { name: 'Rest', value: 100 - Math.max(0, stats.enpsScore), fill: '#F27D26' }
   ];
 
   return (
-    <div className="p-4 mt-10 space-y-4 max-full mx-auto">
+    <div className="p-4 mt-5 space-y-4 max-full mx-[30px]">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6">
         <StatCard 
           icon={<Target className="w-5 h-5 text-primary" />}
           label="Identificação"
           value={`${stats.identificationScore.toFixed(0)}%`}
-          subValue="Com os pilares"
+          subValue="dos Consisters identificam os pilares no dia a dia"
           tooltip={METRIC_DESCRIPTIONS.identificacao}
         />
         <StatCard 
           icon={<Users className="w-5 h-5 text-primary" />}
           label="Liderança"
           value={`${stats.leadershipScore.toFixed(0)}%`}
-          subValue="Como embaixadora"
+          subValue="dos Consisters olham suas lideranças como embaixadora"
           tooltip={METRIC_DESCRIPTIONS.lideranca}
         />
         <StatCard 
           icon={<Shield className="w-5 h-5 text-primary" />}
           label="Segurança"
           value={`${stats.safetyScore.toFixed(0)}%`}
-          subValue="Espaço para erro"
+          subValue="dos Consisters sentem segurança dentro do time"
           tooltip={METRIC_DESCRIPTIONS.seguranca}
         />
         <StatCard 
           icon={<Award className="w-5 h-5 text-primary" />}
           label="Reconhecimento"
           value={`${stats.recognitionScore.toFixed(0)}%`}
-          subValue="Valorização"
+          subValue="dos Consisters sentem que são valorizados"
           tooltip={METRIC_DESCRIPTIONS.reconhecimento}
         />
         <StatCard 
           icon={<Verified className="w-5 h-5 text-white" />}
           label="Respostas"
           value={stats.totalResponses.toString()}
-          subValue="Total de envios"
+          subValue="Quantidade de respostas da pesquisa"
           highlight
-          tooltip="Quantidade total de formulários respondidos e processados."
+          tooltip="Quantidade total de formulários respondidos e analisados."
         />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
         {/* eNPS Distribuição */}
         <div className="glass-card p-6 sm:p-8 rounded-3xl relative overflow-hidden">
-          <div className="flex justify-between items-start mb-4">
-            <h3 className="text-variant-style">Distribuição eNPS</h3>
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <h3 className="text-variant-style">Distribuição eNPS</h3>
+              <p className="text-xs text-secondary">Como as notas estão distribuidas</p>
+            </div>
           </div>
           <div className="h-56 relative flex items-center justify-center">
             <ResponsiveContainer width="100%" height="100%">
@@ -127,10 +130,10 @@ export function VisaoGeralContent({ stats }: VisaoGeralContentProps) {
         </div>
 
         {/* eNPS Geral / NPS Total */}
-        <div ref={enpsRef} className="glass-card p-6 sm:p-8 rounded-3xl relative overflow-hidden group">
+        <div ref={enpsRef} className="glass-card p-6 sm:p-8 rounded-3xl relative overflow-hidden group mb-[15px]">
           <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl" />
           <div className="flex justify-between items-start mb-4 relative z-10">
-            <h3 className="text-variant-style text-center w-full">NPS Total</h3>
+            <h3 className="text-variant-style text-center w-full">NPS total</h3>
             <div className="absolute right-0">
               <ExportButton targetRef={enpsRef} fileName="enps-geral" />
             </div>
@@ -180,10 +183,10 @@ export function VisaoGeralContent({ stats }: VisaoGeralContentProps) {
         </div>
 
         {/* Distribuição por Área */}
-        <div ref={distributionRef} className="glass-card p-6 sm:p-8 rounded-3xl relative">
+        <div ref={distributionRef} className="glass-card p-6 sm:p-8 rounded-3xl relative mt-[15px]">
           <div className="flex justify-between items-start mb-6">
             <div>
-              <h3 className="text-variant-style">Distribuição por Área</h3>
+              <h3 className="text-variant-style">Distribuição por área</h3>
               <p className="text-xs text-secondary">Onde nossos talentos atuam hoje</p>
             </div>
             <ExportButton targetRef={distributionRef} fileName="distribuicao-area" />
@@ -215,7 +218,10 @@ export function VisaoGeralContent({ stats }: VisaoGeralContentProps) {
         {/* Saúde & Bem-estar */}
         <div ref={healthRef} className="glass-card p-6 sm:p-8 rounded-3xl relative">
           <div className="flex justify-between items-start mb-6">
-            <h3 className="text-variant-style">Saúde & Bem-estar</h3>
+            <div>
+              <h3 className="text-variant-style">Saúde & Bem-estar</h3>
+              <p className="text-xs text-secondary">Prática de exercícios entre os Consisters</p>
+            </div>
             <ExportButton targetRef={healthRef} fileName="saude-bem-estar" />
           </div>
           <div className="flex items-center gap-8">
@@ -249,7 +255,7 @@ export function VisaoGeralContent({ stats }: VisaoGeralContentProps) {
                 <div className="w-3 h-3 rounded-full bg-[#049C7A]"></div>
                 <div>
                   <p className="text-[10px] font-bold text-secondary uppercase">Ativos</p>
-                  <p className="text-xs font-bold">Praticam Exercícios</p>
+                  <p className="text-xs font-bold">Praticam exercícios</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -267,8 +273,8 @@ export function VisaoGeralContent({ stats }: VisaoGeralContentProps) {
         <div ref={infoSourcesRef} className="glass-card p-6 sm:p-8 rounded-3xl relative">
           <div className="flex justify-between items-start mb-6 sm:mb-8">
             <div>
-              <h3 className="text-variant-style">Fontes de Informação</h3>
-              <p className="text-xs sm:text-sm text-secondary">Canais diários</p>
+              <h3 className="text-variant-style">Fontes de informação</h3>
+              <p className="text-xs text-secondary">Canais diários</p>
             </div>
             <ExportButton targetRef={infoSourcesRef} fileName="fontes-informacao" />
           </div>
@@ -350,24 +356,6 @@ export function VisaoGeralContent({ stats }: VisaoGeralContentProps) {
               ))}
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Ações Prioritárias - Full Width Style like Image */}
-      <div ref={actionsRef} className="py-12 relative">
-        <div className="flex justify-between items-center mb-12">
-          <h2 className="text-5xl font-black text-[#F27D26] tracking-tight">Prioridades</h2>
-          <ExportButton targetRef={actionsRef} fileName="prioridades" />
-        </div>
-        <div className="space-y-6">
-          {stats.priorityActions.slice(0, 4).map((action, index) => (
-            <div key={index} className="flex items-center gap-8 p-8 rounded-[32px] bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-outline-variant/5 group hover:shadow-[0_20px_50px_rgba(242,125,38,0.1)] transition-all duration-500">
-              <div className="w-14 h-14 rounded-full bg-[#F27D26] text-white flex items-center justify-center shrink-0 text-2xl font-black shadow-xl shadow-[#F27D26]/30">
-                {index + 1}
-              </div>
-              <p className="text-2xl font-bold text-[#312D31] leading-tight">{action.action}</p>
-            </div>
-          ))}
         </div>
       </div>
     </div>

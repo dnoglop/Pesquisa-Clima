@@ -20,7 +20,6 @@ export default function App() {
   const [showSkeleton, setShowSkeleton] = useState(false);
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
-  const [selectedArea, setSelectedArea] = useState<string>('Todas');
   const [rawData, setRawData] = useState<any[]>([]);
 
   const loadData = async () => {
@@ -29,7 +28,7 @@ export default function App() {
     try {
       const data = await fetchSurveyData();
       setRawData(data);
-      const processed = processStats(data, selectedArea, startDate, endDate);
+      const processed = processStats(data, startDate, endDate);
       setStats(processed);
     } catch (error) {
       console.error('Error loading survey data:', error);
@@ -56,10 +55,10 @@ export default function App() {
 
   useEffect(() => {
     if (rawData.length > 0) {
-      const processed = processStats(rawData, selectedArea, startDate, endDate);
+      const processed = processStats(rawData, startDate, endDate);
       setStats(processed);
     }
-  }, [rawData, startDate, endDate, selectedArea]);
+  }, [rawData, startDate, endDate]);
 
   if (loading && !stats) {
     return showSkeleton ? (
@@ -82,9 +81,6 @@ export default function App() {
           onStartDateChange={setStartDate}
           endDate={endDate}
           onEndDateChange={setEndDate}
-          selectedArea={selectedArea}
-          onAreaChange={setSelectedArea}
-          areas={stats?.areas || []}
           onRefresh={loadData}
           isRefreshing={loading}
         />
