@@ -1,7 +1,8 @@
 import Papa from 'papaparse';
 import { SurveyResponse, DashboardStats } from '../types';
 
-const API_URL = '/api/survey-data';
+//const API_URL = '/api/survey-data';
+const API_URL = 'https://script.google.com/macros/s/AKfycbzz7O1shFzKHoWIQebIdp5sTdqNAzAkZzVO41tpGhMknNiKaKmNxZ2sD4JYe7Fs47FI/exec';
 
 // Adicione esta lista com as opções exatas:
 const PRIORIDADES_POSSIVEIS = [
